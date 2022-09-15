@@ -47,7 +47,7 @@ class _PlaceCommentsState extends State<PlaceComments> {
                           children: [
                             Icon(Icons.star, color: MyColors.yellow),
                             SizedBox(width: 6),
-                            Text(widget.owner.getAverageRating().toString(), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                            Text(widget.owner.getAverageRating().toStringAsFixed(2), style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),

@@ -3,6 +3,7 @@ import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/screens/UserScreens/MapsScreen/maps_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/PlaceAllProducts/place_all_products.dart';
 import 'package:bi_suru_app/screens/UserScreens/PlaceComments/place_comments.dart';
 import 'package:bi_suru_app/services/database_service.dart';
@@ -223,18 +224,23 @@ class _PlaceDetailState extends State<PlaceDetail> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(Icons.map_outlined),
-                                    Text(
-                                      'Lokasyon',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => MapsScreen(ownerModel: ownerModel)));
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Icon(Icons.map_outlined),
+                                      Text(
+                                        'Lokasyon',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               VerticalDivider(
@@ -243,18 +249,23 @@ class _PlaceDetailState extends State<PlaceDetail> {
                                 endIndent: 10,
                               ),
                               Expanded(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Icon(Icons.person),
-                                    Text(
-                                      'Menü',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAllProducts(ownerModel: ownerModel)));
+                                  },
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Icon(Icons.person),
+                                      Text(
+                                        'Menü',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                               VerticalDivider(

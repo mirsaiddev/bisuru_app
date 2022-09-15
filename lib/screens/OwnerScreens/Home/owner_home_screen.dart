@@ -39,12 +39,31 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    MyLogoWidgetColored(radius: 20, padding: 8),
-                    TextButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => PremiumScreen()));
-                        },
-                        child: Text('Premium')),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        MyLogoWidgetColored(radius: 20, padding: 8),
+                        SizedBox(width: 6),
+                        Text('BiSürü', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        children: [
+                          Image.asset('lib/assets/images/location.png', width: 14),
+                          SizedBox(width: 6),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Lokasyonunuz', style: TextStyle(fontSize: 8)),
+                              Text(ownerModel.city, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
                 if (!ownerModel.placeIsOpen())

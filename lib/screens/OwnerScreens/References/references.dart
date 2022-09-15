@@ -1,4 +1,5 @@
 import 'package:bi_suru_app/models/owner_model.dart';
+import 'package:bi_suru_app/models/reference.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/services/database_service.dart';
@@ -26,57 +27,69 @@ class _ReferencesScreenState extends State<ReferencesScreen> {
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(10),
-          child: Column(
-            children: [
-              MyAppBar(title: 'Referanslar', showBackButton: false),
-              SizedBox(height: 10),
-              StreamBuilder<DatabaseEvent>(
-                stream: DatabaseService().referencesStream(ownerModel.uid!),
-                builder: (context, snapshot) {
-                  if (snapshot.data == null) {
-                    return SizedBox();
-                  }
-                  Map referencesMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
-                  List<String> references = referencesMap.entries.map((e) => e.value.toString()).toList();
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                MyAppBar(title: 'Referanslar', showBackButton: false),
+                SizedBox(height: 10),
+                StreamBuilder<DatabaseEvent>(
+                  stream: DatabaseService().referencesStream(ownerModel.uid!),
+                  builder: (context, snapshot) {
+                    if (snapshot.data == null) {
+                      return SizedBox();
+                    }
+                    Map referencesMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
+                    List<Reference> references = referencesMap.entries.map((e) => Reference.fromMap(e.value as Map)).toList();
+                    print('references: $references');
 
-                  return Column(
-                    children: [
-                      for (String referenceUid in references)
-                        StreamBuilder<DatabaseEvent>(
-                          stream: DatabaseService().userStream(referenceUid),
-                          builder: (context, snapshot) {
-                            if (snapshot.data == null) {
-                              return SizedBox();
-                            }
-                            Map userMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
-                            UserModel userModel = UserModel.fromJson(userMap);
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 10.0),
-                              child: MyListTile(
-                                child: Row(
-                                  children: [
-                                    userModel.profilePicUrl != null
-                                        ? ClipRRect(
-                                            child: Image.network(userModel.profilePicUrl!, height: 50, width: 50), borderRadius: BorderRadius.circular(10))
-                                        : Container(
-                                            height: 50,
-                                            width: 50,
-                                            decoration: BoxDecoration(color: MyColors.grey, borderRadius: BorderRadius.circular(10)),
-                                            child: Center(child: Icon(Icons.person)),
-                                          ),
-                                    SizedBox(width: 10),
-                                    Text(userModel.fullName),
-                                  ],
+                    return Column(
+                      children: [
+                        for (Reference reference in references)
+                          StreamBuilder<DatabaseEvent>(
+                            stream: DatabaseService().userStream(reference.uid),
+                            builder: (context, snapshot) {
+                              if (snapshot.data == null) {
+                                return SizedBox();
+                              }
+                              Map userMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
+                              UserModel userModel = UserModel.fromJson(userMap);
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                child: MyListTile(
+                                  child: Row(
+                                    children: [
+                                      userModel.profilePicUrl != null
+                                          ? ClipRRect(
+                                              child: Image.network(userModel.profilePicUrl!, height: 50, width: 50), borderRadius: BorderRadius.circular(10))
+                                          : Container(
+                                              height: 50,
+                                              width: 50,
+                                              decoration: BoxDecoration(color: MyColors.grey, borderRadius: BorderRadius.circular(10)),
+                                              child: Center(child: Icon(Icons.person)),
+                                            ),
+                                      SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(userModel.fullName, style: TextStyle(fontWeight: FontWeight.bold)),
+                                            Text(reference.productName),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(reference.date.toString()),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                    ],
-                  );
-                },
-              )
-            ],
+                              );
+                            },
+                          ),
+                      ],
+                    );
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

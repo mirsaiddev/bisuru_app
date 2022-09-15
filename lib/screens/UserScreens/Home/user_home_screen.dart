@@ -1,12 +1,10 @@
 import 'package:bi_suru_app/models/owner_model.dart';
+import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/places_provider.dart';
 import 'package:bi_suru_app/providers/system_provider.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
-import 'package:bi_suru_app/screens/Splash/splash_screen.dart';
+import 'package:bi_suru_app/screens/OwnerScreens/CategoryPlaces/category_places.dart';
 import 'package:bi_suru_app/screens/UserScreens/Places/places_screen.dart';
-import 'package:bi_suru_app/services/auth_service.dart';
-import 'package:bi_suru_app/theme/colors.dart';
-import 'package:bi_suru_app/utils/enums/auth_status.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/place_widget.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +22,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   Widget build(BuildContext context) {
     SystemProvider systemProvider = Provider.of<SystemProvider>(context);
     PlacesProvider placesProvider = Provider.of<PlacesProvider>(context);
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserModel userModel = userProvider.userModel!;
     List<OwnerModel> places = placesProvider.places;
     List<String> categories = systemProvider.categories;
 
@@ -35,7 +35,36 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MyLogoWidgetColored(radius: 20, padding: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        MyLogoWidgetColored(radius: 20, padding: 8),
+                        SizedBox(width: 6),
+                        Text('BiSürü', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                      child: Row(
+                        children: [
+                          Image.asset('lib/assets/images/location.png', width: 14),
+                          SizedBox(width: 6),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Lokasyonunuz', style: TextStyle(fontSize: 8)),
+                              Text(userModel.city, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 10),
                 AspectRatio(
                   aspectRatio: 2 / 1,
@@ -62,36 +91,41 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   child: Row(
                     children: [
                       for (String category in categories)
-                        Container(
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
-                          padding: EdgeInsets.all(10),
-                          margin: EdgeInsets.only(right: 10),
-                          width: 80,
-                          height: 100,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Container(
-                              //   height: 60,
-                              //   width: 60,
-                              //   decoration: BoxDecoration(
-                              //     color: Colors.red,
-                              //     borderRadius: BorderRadius.circular(6),
-                              //   ),
-                              // ),
-                              Flexible(
-                                child: Text(
-                                  category,
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                  overflow: TextOverflow.ellipsis,
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryPlaces(category: category)));
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
+                            padding: EdgeInsets.all(10),
+                            margin: EdgeInsets.only(right: 10),
+                            width: 80,
+                            height: 100,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Container(
+                                //   height: 60,
+                                //   width: 60,
+                                //   decoration: BoxDecoration(
+                                //     color: Colors.red,
+                                //     borderRadius: BorderRadius.circular(6),
+                                //   ),
+                                // ),
+                                Flexible(
+                                  child: Text(
+                                    category,
+                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 6),
-                              Text(
-                                placesProvider.getPlaceCountForCategory(category).toString(),
-                                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-                              ),
-                            ],
+                                SizedBox(height: 6),
+                                Text(
+                                  placesProvider.getPlaceCountForCategory(category).toString(),
+                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                     ],

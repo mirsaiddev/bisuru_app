@@ -7,12 +7,15 @@ import 'package:bi_suru_app/widgets/place_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'dart:ui' as ui;
 
 import 'package:provider/provider.dart';
 
 class MapsScreen extends StatefulWidget {
-  const MapsScreen({Key? key}) : super(key: key);
+  const MapsScreen({Key? key, this.ownerModel}) : super(key: key);
+
+  final OwnerModel? ownerModel;
 
   @override
   State<MapsScreen> createState() => _MapsScreenState();
@@ -21,7 +24,7 @@ class MapsScreen extends StatefulWidget {
 class _MapsScreenState extends State<MapsScreen> {
   GoogleMapController? controller;
 
-  static final CameraPosition initialLocation = CameraPosition(target: LatLng(38.6748, 39.2225), zoom: 13.5);
+  CameraPosition? initialLocation;
   Set<Marker> markers = {};
   LatLng? selectedLocation;
   BitmapDescriptor? markerIcon;
@@ -61,48 +64,101 @@ class _MapsScreenState extends State<MapsScreen> {
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
   }
 
+  late bool serviceEnabled;
+  late PermissionStatus permissionGranted;
+  LocationData? userLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    getUserLocation();
+  }
+
+  Future<void> getUserLocation() async {
+    if (widget.ownerModel != null) {
+      selectedOwner = widget.ownerModel;
+      initialLocation = CameraPosition(target: LatLng(selectedOwner!.placeAddress!['lat'], selectedOwner!.placeAddress!['long']), zoom: 14);
+      setState(() {});
+      return;
+    }
+    Location location = Location();
+
+    try {
+      // Check if location service is enable
+      serviceEnabled = await location.serviceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) {
+          return;
+        }
+      }
+
+      // Check if permission is granted
+      permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          return;
+        }
+      }
+
+      final _locationData = await location.getLocation();
+      setState(() {
+        userLocation = _locationData;
+        initialLocation = CameraPosition(target: LatLng(userLocation!.latitude!, userLocation!.longitude!), zoom: 13.5);
+      });
+    } catch (e) {
+      initialLocation = initialLocation = CameraPosition(target: LatLng(38.6748, 39.2225), zoom: 13.5);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Expanded(
-                child: MyListTile(
-                  padding: 0,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        GoogleMap(
-                          myLocationButtonEnabled: false,
-                          initialCameraPosition: initialLocation,
-                          onMapCreated: (GoogleMapController _controller) async {
-                            controller = _controller;
-                            controller!.setMapStyle(await rootBundle.loadString('lib/assets/txt/map_style.txt'));
-                            await setMarkerIcon();
-                            await setMarkers();
-                          },
-                          markers: markers,
-                        ),
-                        if (selectedOwner != null)
-                          Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: SizedBox(
-                              height: 250,
-                              child: PlaceWidget(ownerModel: selectedOwner!),
-                            ),
+          child: Builder(builder: (context) {
+            if (initialLocation == null) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return Column(
+              children: [
+                Expanded(
+                  child: MyListTile(
+                    padding: 0,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          GoogleMap(
+                            myLocationButtonEnabled: false,
+                            initialCameraPosition: initialLocation!,
+                            onMapCreated: (GoogleMapController _controller) async {
+                              controller = _controller;
+                              controller!.setMapStyle(await rootBundle.loadString('lib/assets/txt/map_style.txt'));
+                              await setMarkerIcon();
+                              await setMarkers();
+                            },
+                            markers: markers,
                           ),
-                      ],
+                          if (selectedOwner != null)
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: SizedBox(
+                                height: 250,
+                                child: PlaceWidget(ownerModel: selectedOwner!),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            );
+          }),
         ),
       ),
     );

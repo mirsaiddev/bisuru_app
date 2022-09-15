@@ -19,4 +19,8 @@ class PlacesProvider extends ChangeNotifier {
   int getPlaceCountForCategory(String category) {
     return places.where((element) => element.placeCategory == category).length;
   }
+
+  List<OwnerModel> getPlacesForCategory(String category) {
+    return places.where((element) => element.placeCategory == category).toList();
+  }
 }

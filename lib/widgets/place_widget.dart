@@ -56,7 +56,9 @@ class _PlaceWidgetState extends State<PlaceWidget> {
             SizedBox(height: 10),
             Text(
               widget.ownerModel.placeDescription!,
+              maxLines: 3,
               style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 10),
             Row(

@@ -1,3 +1,5 @@
+import 'package:bi_suru_app/screens/OwnerScreens/EditProduct/edit_product.dart';
+import 'package:bi_suru_app/services/database_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -24,18 +26,37 @@ class SlidableProductTile extends StatelessWidget {
         endActionPane: ActionPane(motion: const ScrollMotion(), children: [
           SlidableAction(
             borderRadius: BorderRadius.circular(10),
-            onPressed: (val) {},
+            onPressed: (val) {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => EditProduct(productModel: productModel)));
+            },
             backgroundColor: MyColors.blue,
             foregroundColor: Colors.white,
-            icon: CupertinoIcons.pencil,
+            icon: Icons.edit,
           ),
           SizedBox(width: 10),
           SlidableAction(
             borderRadius: BorderRadius.circular(10),
-            onPressed: (val) {},
+            onPressed: (val) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text('Dikkat'),
+                        content: Text('Ürünü silmek istediğinize emin misiniz?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.pop(context), child: Text('Hayır')),
+                          TextButton(
+                            onPressed: () async {
+                              await DatabaseService().deleteProduct(ownerUid: ownerModel.uid!, productModel: productModel);
+                              Navigator.pop(context);
+                            },
+                            child: Text('Evet'),
+                          ),
+                        ],
+                      ));
+            },
             backgroundColor: MyColors.red,
             foregroundColor: Colors.white,
-            icon: CupertinoIcons.delete,
+            icon: Icons.delete,
           ),
         ]),
         child: Container(

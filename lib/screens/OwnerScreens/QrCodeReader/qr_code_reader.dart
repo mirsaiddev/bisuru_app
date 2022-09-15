@@ -25,11 +25,6 @@ class _QrCodeReaderState extends State<QrCodeReader> {
   @override
   void reassemble() {
     super.reassemble();
-    // if (Platform.isAndroid) {
-    //   controller!.pauseCamera();
-    // } else if (Platform.isIOS) {
-    //   controller!.resumeCamera();
-    // }
     controller!.resumeCamera();
   }
 
@@ -69,12 +64,14 @@ class _QrCodeReaderState extends State<QrCodeReader> {
     );
   }
 
-  void _onQRViewCreated(QRViewController controller) {
+  void _onQRViewCreated(QRViewController _controller) {
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     OwnerModel ownerModel = userProvider.ownerModel!;
 
-    this.controller = controller;
-    controller.scannedDataStream.listen((scanData) async {
+    this.controller = _controller;
+    controller!.pauseCamera();
+    controller!.resumeCamera();
+    controller!.scannedDataStream.listen((scanData) async {
       if (scanData.format == BarcodeFormat.qrcode) {
         if (scanData.code != null) {
           try {
@@ -96,7 +93,8 @@ class _QrCodeReaderState extends State<QrCodeReader> {
               if ((ownerModel.products).any((element) => element.id == productId)) {
                 if (!qrCodeReaded) {
                   qrCodeReaded = true;
-                  await userProvider.addReference(uid);
+                  ProductModel productModel = ownerModel.products.firstWhere((element) => element.id == productId);
+                  await userProvider.addReference(userId: uid, productName: productModel.name);
                   BottomNavBarProvider bottomNavBarProvider = Provider.of<BottomNavBarProvider>(context, listen: false);
                   bottomNavBarProvider.ownerSetCurrentIndex(1);
                   MySnackbar.show(context, message: 'Başarılı');

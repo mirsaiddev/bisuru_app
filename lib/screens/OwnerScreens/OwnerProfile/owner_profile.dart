@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bi_suru_app/models/il_ilce_model.dart';
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/screens/OwnerScreens/Premium/premium_screen.dart';
 import 'package:bi_suru_app/screens/SelectCityDistrict/select_city_screen.dart';
 import 'package:bi_suru_app/screens/SelectCityDistrict/select_district_screen.dart';
 import 'package:bi_suru_app/screens/Splash/splash_screen.dart';
@@ -263,6 +264,11 @@ class _OwnerProfileState extends State<OwnerProfile> {
               ),
               SizedBox(height: 10),
               MyButton(
+                text: 'Premium',
+                onPressed: () async {},
+              ),
+              SizedBox(height: 10),
+              MyButton(
                 text: 'Çıkış Yap',
                 onPressed: () async {
                   UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
@@ -271,7 +277,7 @@ class _OwnerProfileState extends State<OwnerProfile> {
                   userProvider.setUserModel(null);
                   Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const SplashScreen()), (route) => false);
                 },
-              )
+              ),
             ],
           ),
         ),

@@ -1,6 +1,7 @@
 import 'package:bi_suru_app/models/comment_model.dart';
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
+import 'package:bi_suru_app/models/reference.dart';
 import 'package:bi_suru_app/models/responses/get_user_response.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/services/auth_service.dart';
@@ -72,6 +73,29 @@ class DatabaseService {
     await firebaseDatabase.ref().child('owners').child(ownerUid).child('products').push().set(productModel.toMap());
   }
 
+  Future<void> editProductModel({required String ownerUid, required ProductModel productModel}) async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('owners').child(ownerUid).child('products').get();
+    if (dataSnapshot.exists) {
+      Map productsMap = dataSnapshot.value as Map;
+      MapEntry product = productsMap.entries.firstWhere((element) => element.value['id'] == productModel.id);
+      await firebaseDatabase.ref().child('owners').child(ownerUid).child('products').child(product.key).update(productModel.toMap());
+    }
+  }
+
+  Future<void> deleteProduct({required String ownerUid, required ProductModel productModel}) async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('owners').child(ownerUid).child('products').get();
+    if (dataSnapshot.exists) {
+      Map productsMap = dataSnapshot.value as Map;
+      MapEntry product = productsMap.entries.firstWhere((element) => element.value['id'] == productModel.id);
+      await firebaseDatabase.ref().child('owners').child(ownerUid).child('products').child(product.key).remove();
+    }
+  }
+
+  Future<ProductModel> getProduct({required String ownerUid, required String productId}) async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('owners').child(ownerUid).child('products').child(productId).get();
+    return ProductModel.fromMap(dataSnapshot.value as Map);
+  }
+
   Stream<DatabaseEvent> productsStream(String ownerUid) {
     Stream<DatabaseEvent> stream = firebaseDatabase.ref().child('owners').child(ownerUid).child('products').onValue;
     return stream;
@@ -116,8 +140,8 @@ class DatabaseService {
     return OwnerModel.fromJson(dataSnapshot.value as Map);
   }
 
-  Future<void> addReferences(String uid, String ownerUid) async {
-    await firebaseDatabase.ref().child('owners').child(ownerUid).child('references').push().set(uid);
+  Future<void> addReferences({required Reference reference, required String ownerUid}) async {
+    await firebaseDatabase.ref().child('owners').child(ownerUid).child('references').push().set(reference.toMap());
   }
 
   Stream<DatabaseEvent> userStream(String uid) {

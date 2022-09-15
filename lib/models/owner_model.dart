@@ -1,5 +1,6 @@
 import 'package:bi_suru_app/models/comment_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
+import 'package:bi_suru_app/models/reference.dart';
 
 class OwnerModel {
   String name;
@@ -65,7 +66,7 @@ class OwnerModel {
       placeCategory: json['placeCategory'],
       enable: json['enable'] ?? false,
       products: json['products'] != null ? (json['products'].entries).map((e) => ProductModel.fromMap(e.value)).toList() : [],
-      references: json['references'] != null ? (json['references'].entries).map((e) => e.value).toList() : [],
+      references: json['references'] != null ? (json['references'].entries).map((e) => Reference.fromMap(e.value)).toList() : [],
       comments: json['comments'] != null ? (json['comments'].entries).map((e) => CommentModel.fromMap(e.value as Map)).toList() : [],
       isOwner: true,
     );
