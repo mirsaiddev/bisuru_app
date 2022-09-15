@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "403647813606",
+    "firebase_url": "https://bisuru-8da3c-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "bisuru-8da3c",
+    "storage_bucket": "bisuru-8da3c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:403647813606:android:65c6eccc74722842d12827",
+        "android_client_info": {
+          "package_name": "com.siberetik.bisuru"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "403647813606-gp1fotkahvt7atef953f6iotnkqrhbj2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuKsdkPrfORwWCQyexWIzsI7xHI_fwp7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "403647813606-gp1fotkahvt7atef953f6iotnkqrhbj2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "403647813606-ah3l2ajrk1n4g9qjk092buap839m2gt9.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bisuru.bisuru"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

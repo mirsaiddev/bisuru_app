@@ -1,0 +1,59 @@
+name: bi_suru_app
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.6 <3.0.0"
+
+dependencies:
+  another_flushbar: ^1.12.29
+  cupertino_icons: ^1.0.2
+  firebase_auth: ^3.8.0
+  firebase_core: ^1.22.0
+  firebase_database: ^9.1.4
+  firebase_storage: ^10.3.8
+  flutter:
+    sdk: flutter
+  flutter_custom_clippers: ^2.0.0
+  flutter_rating_stars: ^1.0.3+4
+  flutter_slidable: ^2.0.0
+  google_maps_flutter: ^2.2.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  image_picker: ^0.8.5+3
+  modal_bottom_sheet: ^2.1.2
+  provider: ^6.0.3
+  qr_code_scanner: ^1.0.1
+  qr_flutter: ^4.0.0
+  random_string: ^2.3.1
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - lib/assets/
+    - lib/assets/images/
+    - lib/assets/txt/
+    - lib/assets/json/
+
+  fonts:
+    - family: ReadexPro
+      fonts:
+        - asset: lib/assets/fonts/ReadexPro/ReadexPro-Medium.ttf
+        - asset: lib/assets/fonts/ReadexPro/ReadexPro-ExtraLight.ttf
+          weight: 100
+        - asset: lib/assets/fonts/ReadexPro/ReadexPro-Light.ttf
+          weight: 300
+        - asset: lib/assets/fonts/ReadexPro/ReadexPro-Regular.ttf
+          weight: 500
+        - asset: lib/assets/fonts/ReadexPro/ReadexPro-SemiBold.ttf
+          weight: 700
+        - asset: lib/assets/fonts/ReadexPro/ReadexPro-Bold.ttf
+          weight: 800
