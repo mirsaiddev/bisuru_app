@@ -35,12 +35,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Bi Sürü',
-        theme: ThemeData(
-          fontFamily: 'ReadexPro',
-          primaryColor: MyColors.red,
-          primarySwatch: Colors.red,
-          scaffoldBackgroundColor: MyColors.grey,
-        ),
+        theme: ThemeData(fontFamily: 'ReadexPro', primaryColor: MyColors.red, primarySwatch: Colors.red, scaffoldBackgroundColor: MyColors.grey),
         home: const SplashScreen(),
       ),
     );
