@@ -265,7 +265,9 @@ class _OwnerProfileState extends State<OwnerProfile> {
               SizedBox(height: 10),
               MyButton(
                 text: 'Premium',
-                onPressed: () async {},
+                onPressed: () async {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => PremiumScreen()));
+                },
               ),
               SizedBox(height: 10),
               MyButton(

@@ -1,15 +1,11 @@
 import 'dart:io';
-
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/SelectCategory/select_category.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/SelectLocation/select_location.dart';
-import 'package:bi_suru_app/screens/Splash/splash_screen.dart';
-import 'package:bi_suru_app/services/auth_service.dart';
 import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/services/storage_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
-import 'package:bi_suru_app/utils/enums/auth_status.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_button.dart';
@@ -31,6 +27,7 @@ class OwnerPlace extends StatefulWidget {
 class _OwnerPlaceState extends State<OwnerPlace> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController longDescriptionController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   String? placePicture;
@@ -49,10 +46,15 @@ class _OwnerPlaceState extends State<OwnerPlace> {
     OwnerModel ownerModel = userProvider.ownerModel!;
     nameController.text = ownerModel.placeName ?? '';
     descriptionController.text = ownerModel.placeDescription ?? '';
+    longDescriptionController.text = ownerModel.placeLongDescription ?? '';
     categoryController.text = ownerModel.placeCategory != null ? ownerModel.placeCategory.toString() : '';
     locationController.text = ownerModel.placeAddress != null ? 'Güncellemek için tıklayınız' : '';
     location = ownerModel.placeAddress != null ? LatLng(ownerModel.placeAddress!['lat'], ownerModel.placeAddress!['long']) : null;
     placePicture = ownerModel.placePicture;
+    if (!ownerModel.placeIsOpen() && ownerModel.enable) {
+      ownerModel.enable = false;
+      await DatabaseService().updateOwnerData(ownerId: ownerModel.uid!, data: {'enable': false});
+    }
     setState(() {});
   }
 
@@ -72,6 +74,10 @@ class _OwnerPlaceState extends State<OwnerPlace> {
     if (descriptionController.text.isNotEmpty) {
       data['placeDescription'] = descriptionController.text;
       ownerModel.placeDescription = descriptionController.text;
+    }
+    if (longDescriptionController.text.isNotEmpty) {
+      data['placeLongDescription'] = longDescriptionController.text;
+      ownerModel.placeLongDescription = longDescriptionController.text;
     }
     if (categoryController.text.isNotEmpty) {
       data['placeCategory'] = (categoryController.text);
@@ -217,10 +223,22 @@ class _OwnerPlaceState extends State<OwnerPlace> {
                       MyTextfield(
                         text: 'Mağaza Açıklaması',
                         controller: descriptionController,
-                        maxLines: 3,
+                        maxLines: 2,
                         validator: (val) {
                           if (val!.isEmpty) {
                             return 'Mağaza açıklaması boş bırakılamaz';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      MyTextfield(
+                        text: 'Uzun Mağaza Açıklaması',
+                        controller: longDescriptionController,
+                        maxLines: 5,
+                        validator: (val) {
+                          if (val!.isEmpty) {
+                            return 'Mağaza uzun açıklaması boş bırakılamaz';
                           }
                           return null;
                         },

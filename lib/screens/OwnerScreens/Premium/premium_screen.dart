@@ -1,3 +1,4 @@
+import 'package:bi_suru_app/screens/OwnerScreens/PaymentScreen/payment_screen.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
@@ -116,13 +117,19 @@ class _PremiumScreenState extends State<PremiumScreen> {
                             ),
                             SizedBox(height: 10),
                             Center(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [MyColors.red2, MyColors.orange]),
-                                    borderRadius: BorderRadius.circular(10)),
-                                margin: EdgeInsets.symmetric(horizontal: 30),
-                                padding: EdgeInsets.all(10),
-                                child: Center(child: Text('Satın Al', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen()));
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      gradient:
+                                          LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [MyColors.red2, MyColors.orange]),
+                                      borderRadius: BorderRadius.circular(10)),
+                                  margin: EdgeInsets.symmetric(horizontal: 30),
+                                  padding: EdgeInsets.all(10),
+                                  child: Center(child: Text('Satın Al', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold))),
+                                ),
                               ),
                             ),
                             SizedBox(height: 20),

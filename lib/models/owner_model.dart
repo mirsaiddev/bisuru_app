@@ -9,7 +9,7 @@ class OwnerModel {
   String city;
   String district;
   String? uid, profilePicUrl;
-  String? placeName, placeDescription, placePicture;
+  String? placeName, placeDescription, placeLongDescription, placePicture;
   Map? placeAddress;
   String? placeCategory;
   bool enable;
@@ -19,7 +19,12 @@ class OwnerModel {
   final bool isOwner;
 
   bool placeIsOpen() {
-    return placeName != null && placeDescription != null && placeAddress != null && placePicture != null && placeCategory != null;
+    return placeName != null &&
+        placeDescription != null &&
+        placeAddress != null &&
+        placePicture != null &&
+        placeCategory != null &&
+        placeLongDescription != null;
   }
 
   double getAverageRating() {
@@ -40,6 +45,7 @@ class OwnerModel {
     this.profilePicUrl,
     this.placeName,
     this.placeDescription,
+    this.placeLongDescription,
     this.placeAddress,
     this.placePicture,
     this.placeCategory,
@@ -61,6 +67,7 @@ class OwnerModel {
       profilePicUrl: json['profilePicUrl'],
       placeName: json['placeName'],
       placeDescription: json['placeDescription'],
+      placeLongDescription: json['placeLongDescription'],
       placeAddress: json['placeAddress'],
       placePicture: json['placePicture'],
       placeCategory: json['placeCategory'],
@@ -83,6 +90,7 @@ class OwnerModel {
       'profilePicUrl': profilePicUrl,
       'placeName': placeName,
       'placeDescription': placeDescription,
+      'placeLongDescription': placeLongDescription,
       'placeAddress': placeAddress,
       'placePicture': placePicture,
       'placeCategory': placeCategory,

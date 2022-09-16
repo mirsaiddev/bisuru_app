@@ -3,6 +3,7 @@ import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/screens/UserScreens/AboutOwner/about_owner.dart';
 import 'package:bi_suru_app/screens/UserScreens/MapsScreen/maps_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/PlaceAllProducts/place_all_products.dart';
 import 'package:bi_suru_app/screens/UserScreens/PlaceComments/place_comments.dart';
@@ -201,6 +202,9 @@ class _PlaceDetailState extends State<PlaceDetail> {
                         ),
                         SizedBox(height: 10),
                         MyListTile(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AboutOwner(ownerModel: ownerModel)));
+                          },
                           padding: 16,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
