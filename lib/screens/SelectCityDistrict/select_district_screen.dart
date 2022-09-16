@@ -92,7 +92,11 @@ class _SelectDistrictScreenState extends State<SelectDistrictScreen> {
                               SizedBox(width: 20),
                               Expanded(child: Text(district.ilceAdi)),
                               SizedBox(width: 20),
-                              district == selectedDistrict ? const Icon(Icons.check, color: MyColors.green) : const SizedBox(),
+                              district == selectedDistrict
+                                  ? const CircleAvatar(
+                                      child: Padding(padding: EdgeInsets.all(2.0), child: Icon(Icons.check, color: Colors.white)),
+                                      backgroundColor: MyColors.green)
+                                  : const SizedBox(),
                             ],
                           ),
                         ),

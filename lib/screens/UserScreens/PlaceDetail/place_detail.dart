@@ -223,6 +223,27 @@ class _PlaceDetailState extends State<PlaceDetail> {
                         ),
                         SizedBox(height: 10),
                         MyListTile(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => AboutOwner(ownerModel: ownerModel)));
+                          },
+                          padding: 16,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'İletişim Bilgisi',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(ownerModel.contactInfo ?? 'Henüz eklenmedi')
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        MyListTile(
                             child: Container(
                           height: 80,
                           child: Row(

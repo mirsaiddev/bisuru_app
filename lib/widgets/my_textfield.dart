@@ -1,5 +1,6 @@
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class MyTextfield extends StatelessWidget {
   const MyTextfield({
@@ -15,6 +16,10 @@ class MyTextfield extends StatelessWidget {
     this.prefixText,
     this.onChanged,
     this.fillColor = MyColors.lightGrey,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.inputFormatters,
+    this.keyboardType,
   }) : super(key: key);
 
   final String? text;
@@ -28,6 +33,10 @@ class MyTextfield extends StatelessWidget {
   final bool readOnly;
   final void Function(String)? onChanged;
   final Color fillColor;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final List<TextInputFormatter>? inputFormatters;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +49,8 @@ class MyTextfield extends StatelessWidget {
         ],
         SizedBox(
           child: TextFormField(
+            inputFormatters: inputFormatters,
+            keyboardType: keyboardType,
             onChanged: onChanged,
             readOnly: readOnly,
             onTap: onTap,
@@ -47,6 +58,8 @@ class MyTextfield extends StatelessWidget {
             validator: validator,
             controller: controller,
             decoration: InputDecoration(
+              prefixIcon: prefixIcon,
+              suffixIcon: suffixIcon,
               isDense: true,
               hintText: hintText,
               suffixText: suffixText,

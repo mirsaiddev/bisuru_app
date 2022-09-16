@@ -2,6 +2,7 @@ import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
 import 'package:bi_suru_app/providers/system_provider.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/screens/OwnerScreens/EditProduct/edit_product.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/OwnerProducts/owner_products.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/Premium/premium_screen.dart';
 import 'package:bi_suru_app/services/database_service.dart';
@@ -129,7 +130,11 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                         itemCount: products.length,
                         itemBuilder: (context, index) {
                           ProductModel productModel = products[index];
-                          return ProductWidget(productModel: productModel, ownerModel: ownerModel);
+                          return GestureDetector(
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => EditProduct(productModel: productModel)));
+                              },
+                              child: ProductWidget(productModel: productModel, ownerModel: ownerModel));
                         },
                       );
                     }),

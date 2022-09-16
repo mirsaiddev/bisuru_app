@@ -44,9 +44,10 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
         type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(icon: Image.asset('lib/assets/images/home.png', color: getColor(0), height: 19), label: 'Ana Sayfa'),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite, color: getColor(1)), label: 'Kaydedilenler'),
-          BottomNavigationBarItem(icon: Image.asset('lib/assets/images/map.png', color: getColor(2), height: 22), label: 'Haritalar'),
-          BottomNavigationBarItem(icon: Image.asset('lib/assets/images/profile.png', color: getColor(3), height: 22), label: 'Profilim'),
+          BottomNavigationBarItem(icon: Icon(Icons.category_outlined, color: getColor(1)), label: 'Kategoriler'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_outline, color: getColor(2)), label: 'Kaydedilenler'),
+          BottomNavigationBarItem(icon: Image.asset('lib/assets/images/map.png', color: getColor(3), height: 22), label: 'Haritalar'),
+          BottomNavigationBarItem(icon: Image.asset('lib/assets/images/profile.png', color: getColor(4), height: 22), label: 'Profilim'),
         ],
       ),
     );

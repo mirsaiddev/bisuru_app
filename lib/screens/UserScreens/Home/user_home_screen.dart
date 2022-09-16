@@ -1,11 +1,14 @@
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/user_model.dart';
+import 'package:bi_suru_app/providers/bottom_nav_bar_provider.dart';
 import 'package:bi_suru_app/providers/places_provider.dart';
 import 'package:bi_suru_app/providers/system_provider.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/CategoryPlaces/category_places.dart';
 import 'package:bi_suru_app/screens/UserScreens/Places/places_screen.dart';
+import 'package:bi_suru_app/screens/UserScreens/Search/search_screen.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
+import 'package:bi_suru_app/widgets/my_textfield.dart';
 import 'package:bi_suru_app/widgets/place_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -46,26 +49,43 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         Text('BiSürü', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                       ],
                     ),
-                    Container(
-                      padding: EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-                      child: Row(
-                        children: [
-                          Image.asset('lib/assets/images/location.png', width: 14),
-                          SizedBox(width: 6),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Lokasyonunuz', style: TextStyle(fontSize: 8)),
-                              Text(userModel.city, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                            ],
-                          ),
-                        ],
+                    GestureDetector(
+                      onTap: () {
+                        BottomNavBarProvider bottomNavBarProvider = Provider.of<BottomNavBarProvider>(context, listen: false);
+                        bottomNavBarProvider.setCurrentIndex(2);
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                        child: Row(
+                          children: [
+                            Image.asset('lib/assets/images/location.png', width: 14),
+                            SizedBox(width: 6),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Lokasyonunuz', style: TextStyle(fontSize: 8)),
+                                Text(userModel.city, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 16),
+                MyTextfield(
+                  hintText: 'Mekan Ara',
+                  fillColor: Colors.white,
+                  prefixIcon: Icon(Icons.search, color: Colors.grey),
+                  suffixIcon: Icon(Icons.arrow_forward_ios, color: Colors.grey),
+                  readOnly: true,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchScreen()));
+                  },
+                ),
+                SizedBox(height: 16),
                 AspectRatio(
                   aspectRatio: 2 / 1,
                   child: PageView.builder(
@@ -104,14 +124,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // Container(
-                                //   height: 60,
-                                //   width: 60,
-                                //   decoration: BoxDecoration(
-                                //     color: Colors.red,
-                                //     borderRadius: BorderRadius.circular(6),
-                                //   ),
-                                // ),
                                 Flexible(
                                   child: Text(
                                     category,

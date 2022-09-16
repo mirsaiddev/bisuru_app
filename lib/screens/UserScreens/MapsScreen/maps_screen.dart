@@ -83,12 +83,14 @@ class _MapsScreenState extends State<MapsScreen> {
     }
     Location location = Location();
 
+    initialLocation = initialLocation = CameraPosition(target: LatLng(38.6748, 39.2225), zoom: 13.5);
     try {
       // Check if location service is enable
       serviceEnabled = await location.serviceEnabled();
       if (!serviceEnabled) {
         serviceEnabled = await location.requestService();
         if (!serviceEnabled) {
+          initialLocation = initialLocation = CameraPosition(target: LatLng(38.6748, 39.2225), zoom: 13.5);
           return;
         }
       }
@@ -98,6 +100,7 @@ class _MapsScreenState extends State<MapsScreen> {
       if (permissionGranted == PermissionStatus.denied) {
         permissionGranted = await location.requestPermission();
         if (permissionGranted != PermissionStatus.granted) {
+          initialLocation = initialLocation = CameraPosition(target: LatLng(38.6748, 39.2225), zoom: 13.5);
           return;
         }
       }

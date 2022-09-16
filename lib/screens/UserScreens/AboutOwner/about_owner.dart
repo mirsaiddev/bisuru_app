@@ -23,9 +23,41 @@ class _AboutOwnerState extends State<AboutOwner> {
           children: [
             MyAppBar(title: 'Mağaza Hakkında', showBackButton: true),
             SizedBox(height: 10),
-            MyListTile(child: Text(widget.ownerModel.placeDescription ?? '', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600))),
+            MyListTile(
+              padding: 16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Açıklama',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(widget.ownerModel.placeDescription ?? '')
+                ],
+              ),
+            ),
             SizedBox(height: 10),
-            MyListTile(child: Text(widget.ownerModel.placeLongDescription ?? '', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600))),
+            MyListTile(
+              padding: 16,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Uzun Açıklama',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(widget.ownerModel.placeLongDescription ?? '')
+                ],
+              ),
+            ),
             SizedBox(height: 10),
           ],
         ),

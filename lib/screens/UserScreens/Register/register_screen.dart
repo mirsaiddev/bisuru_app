@@ -11,6 +11,7 @@ import 'package:bi_suru_app/services/hive_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/extensions.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
+import 'package:bi_suru_app/utils/text_input_formatters.dart';
 import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
@@ -109,6 +110,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         MyTextfield(
                           text: 'Ad soyad',
                           controller: nameController,
+                          keyboardType: TextInputType.name,
+                          inputFormatters: [
+                            denyNumbers,
+                          ],
                           validator: (text) {
                             if (text!.isEmpty) {
                               return 'Ad soyad boş bırakılamaz';
@@ -134,6 +139,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         MyTextfield(
                           text: 'Telefon',
                           controller: phoneController,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            allowNumbers,
+                            denyCharacters,
+                          ],
                           validator: (text) {
                             if (text!.isEmpty) {
                               return 'Telefon boş bırakılamaz';

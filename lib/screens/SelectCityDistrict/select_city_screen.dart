@@ -110,7 +110,11 @@ class _SelectCityScreenState extends State<SelectCityScreen> {
                               SizedBox(width: 20),
                               Expanded(child: Text(city.ilAdi)),
                               SizedBox(width: 20),
-                              selectedCity != null && selectedCity!.ilAdi == city.ilAdi ? const Icon(Icons.check, color: MyColors.green) : const SizedBox(),
+                              selectedCity != null && selectedCity!.ilAdi == city.ilAdi
+                                  ? const CircleAvatar(
+                                      child: Padding(padding: EdgeInsets.all(2.0), child: Icon(Icons.check, color: Colors.white)),
+                                      backgroundColor: MyColors.green)
+                                  : const SizedBox(),
                             ],
                           ),
                         ),

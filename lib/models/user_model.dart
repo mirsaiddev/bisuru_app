@@ -1,3 +1,5 @@
+import 'package:bi_suru_app/models/purchase.dart';
+
 class UserModel {
   String fullName;
   String phone;
@@ -7,6 +9,7 @@ class UserModel {
   String? uid, profilePicUrl;
   List savedPlaces;
   final bool isOwner;
+  final List purchases;
 
   UserModel({
     required this.fullName,
@@ -18,6 +21,7 @@ class UserModel {
     this.profilePicUrl,
     this.savedPlaces = const [],
     this.isOwner = false,
+    this.purchases = const [],
   });
 
   factory UserModel.fromJson(Map json) {
@@ -31,6 +35,7 @@ class UserModel {
       profilePicUrl: json['profilePicUrl'],
       savedPlaces: json['savedPlaces'] != null ? json['savedPlaces'].entries.map((e) => e.value).toList() : [],
       isOwner: json['isOwner'] ?? false,
+      purchases: json['purchases'] != null ? (json['purchases'].entries).map((e) => Purchase.fromMap(e.value)).toList() : [],
     );
   }
 
@@ -45,6 +50,7 @@ class UserModel {
       'profilePicUrl': profilePicUrl,
       'savedPlaces': savedPlaces,
       'isOwner': false,
+      'purchases': purchases,
     };
 
     return result;

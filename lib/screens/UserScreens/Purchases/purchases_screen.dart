@@ -1,5 +1,5 @@
 import 'package:bi_suru_app/models/owner_model.dart';
-import 'package:bi_suru_app/models/reference.dart';
+import 'package:bi_suru_app/models/purchase.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/services/database_service.dart';
@@ -8,22 +8,21 @@ import 'package:bi_suru_app/utils/date_formatters.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class ReferencesScreen extends StatefulWidget {
-  const ReferencesScreen({Key? key}) : super(key: key);
+class PurchasesScreen extends StatefulWidget {
+  const PurchasesScreen({Key? key}) : super(key: key);
 
   @override
-  State<ReferencesScreen> createState() => _ReferencesScreenState();
+  State<PurchasesScreen> createState() => _PurchasesScreenState();
 }
 
-class _ReferencesScreenState extends State<ReferencesScreen> {
+class _PurchasesScreenState extends State<PurchasesScreen> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
-    OwnerModel ownerModel = userProvider.ownerModel!;
+    UserModel userModel = userProvider.userModel!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -31,7 +30,7 @@ class _ReferencesScreenState extends State<ReferencesScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                MyAppBar(title: 'Referanslar', showBackButton: false),
+                MyAppBar(title: 'Satın Alımlar', showBackButton: true),
                 SizedBox(height: 10),
                 // MyListTile(
                 //   child: Row(
@@ -42,34 +41,34 @@ class _ReferencesScreenState extends State<ReferencesScreen> {
                 // ),
                 // SizedBox(height: 10),
                 StreamBuilder<DatabaseEvent>(
-                  stream: DatabaseService().referencesStream(ownerModel.uid!),
+                  stream: DatabaseService().purchasesStream(userModel.uid!),
                   builder: (context, snapshot) {
                     if (snapshot.data == null) {
                       return SizedBox();
                     }
-                    Map referencesMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
-                    List<Reference> references = referencesMap.entries.map((e) => Reference.fromMap(e.value as Map)).toList();
-                    references.sort((a, b) => b.date.compareTo(a.date));
+                    Map purchasesMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
+                    List<Purchase> purchases = purchasesMap.entries.map((e) => Purchase.fromMap(e.value as Map)).toList();
+                    purchases.sort((a, b) => b.date.compareTo(a.date));
 
                     return Column(
                       children: [
-                        for (Reference reference in references)
+                        for (Purchase purchase in purchases)
                           StreamBuilder<DatabaseEvent>(
-                            stream: DatabaseService().userStream(reference.uid),
+                            stream: DatabaseService().ownerStream(purchase.ownerUid),
                             builder: (context, snapshot) {
                               if (snapshot.data == null) {
                                 return SizedBox();
                               }
                               Map userMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
-                              UserModel userModel = UserModel.fromJson(userMap);
+                              OwnerModel ownerModel = OwnerModel.fromJson(userMap);
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 10.0),
                                 child: MyListTile(
                                   child: Row(
                                     children: [
-                                      userModel.profilePicUrl != null
+                                      ownerModel.profilePicUrl != null
                                           ? ClipRRect(
-                                              child: Image.network(userModel.profilePicUrl!, height: 50, width: 50), borderRadius: BorderRadius.circular(10))
+                                              child: Image.network(ownerModel.profilePicUrl!, height: 50, width: 50), borderRadius: BorderRadius.circular(10))
                                           : Container(
                                               height: 50,
                                               width: 50,
@@ -81,12 +80,12 @@ class _ReferencesScreenState extends State<ReferencesScreen> {
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text(userModel.fullName, style: TextStyle(fontWeight: FontWeight.bold)),
-                                            Text(reference.productName),
+                                            Text(ownerModel.name, style: TextStyle(fontWeight: FontWeight.bold)),
+                                            Text(purchase.productName),
                                           ],
                                         ),
                                       ),
-                                      Text(reference.date.toDateStringWithTime()),
+                                      Text(purchase.date.toDateStringWithTime()),
                                     ],
                                   ),
                                 ),

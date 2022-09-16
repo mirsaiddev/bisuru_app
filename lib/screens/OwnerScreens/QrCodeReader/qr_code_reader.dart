@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
+import 'package:bi_suru_app/models/purchase.dart';
 import 'package:bi_suru_app/providers/bottom_nav_bar_provider.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -94,7 +96,9 @@ class _QrCodeReaderState extends State<QrCodeReader> {
                 if (!qrCodeReaded) {
                   qrCodeReaded = true;
                   ProductModel productModel = ownerModel.products.firstWhere((element) => element.id == productId);
+                  Purchase purchase = Purchase(ownerUid: ownerUid, date: DateTime.now(), productName: productModel.name);
                   await userProvider.addReference(userId: uid, productName: productModel.name);
+                  await DatabaseService().addPurchase(userId: uid, purchase: purchase);
                   BottomNavBarProvider bottomNavBarProvider = Provider.of<BottomNavBarProvider>(context, listen: false);
                   bottomNavBarProvider.ownerSetCurrentIndex(1);
                   MySnackbar.show(context, message: 'Başarılı');

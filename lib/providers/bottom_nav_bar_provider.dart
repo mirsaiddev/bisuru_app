@@ -5,6 +5,7 @@ import 'package:bi_suru_app/screens/OwnerScreens/OwnerProfile/owner_profile.dart
 import 'package:bi_suru_app/screens/OwnerScreens/QrCodeReader/qr_code_reader.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/References/references.dart';
 import 'package:bi_suru_app/screens/Splash/splash_screen.dart';
+import 'package:bi_suru_app/screens/UserScreens/Categories/categories_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/Home/user_home_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/MapsScreen/maps_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/UserProfile/user_profile.dart';
@@ -21,6 +22,7 @@ class BottomNavBarProvider extends ChangeNotifier {
 
   List<Widget> pages = [
     const UserHomeScreen(),
+    const CategoriesScreen(),
     const SavedPlaces(),
     const MapsScreen(),
     const UserProfile(),

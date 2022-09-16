@@ -9,7 +9,7 @@ class OwnerModel {
   String city;
   String district;
   String? uid, profilePicUrl;
-  String? placeName, placeDescription, placeLongDescription, placePicture;
+  String? placeName, placeDescription, placeLongDescription, placePicture, contactInfo;
   Map? placeAddress;
   String? placeCategory;
   bool enable;
@@ -17,6 +17,8 @@ class OwnerModel {
   final List references;
   final List comments;
   final bool isOwner;
+  final String taxNumber;
+  final String taxOffice;
 
   bool placeIsOpen() {
     return placeName != null &&
@@ -24,7 +26,8 @@ class OwnerModel {
         placeAddress != null &&
         placePicture != null &&
         placeCategory != null &&
-        placeLongDescription != null;
+        placeLongDescription != null &&
+        contactInfo != null;
   }
 
   double getAverageRating() {
@@ -41,11 +44,14 @@ class OwnerModel {
     required this.email,
     required this.city,
     required this.district,
+    required this.taxOffice,
+    required this.taxNumber,
     this.uid,
     this.profilePicUrl,
     this.placeName,
     this.placeDescription,
     this.placeLongDescription,
+    this.contactInfo,
     this.placeAddress,
     this.placePicture,
     this.placeCategory,
@@ -68,6 +74,7 @@ class OwnerModel {
       placeName: json['placeName'],
       placeDescription: json['placeDescription'],
       placeLongDescription: json['placeLongDescription'],
+      contactInfo: json['contactInfo'],
       placeAddress: json['placeAddress'],
       placePicture: json['placePicture'],
       placeCategory: json['placeCategory'],
@@ -76,6 +83,8 @@ class OwnerModel {
       references: json['references'] != null ? (json['references'].entries).map((e) => Reference.fromMap(e.value)).toList() : [],
       comments: json['comments'] != null ? (json['comments'].entries).map((e) => CommentModel.fromMap(e.value as Map)).toList() : [],
       isOwner: true,
+      taxNumber: json['taxNumber'] ?? '',
+      taxOffice: json['taxOffice'] ?? '',
     );
   }
 
@@ -91,6 +100,7 @@ class OwnerModel {
       'placeName': placeName,
       'placeDescription': placeDescription,
       'placeLongDescription': placeLongDescription,
+      'contactInfo': contactInfo,
       'placeAddress': placeAddress,
       'placePicture': placePicture,
       'placeCategory': placeCategory,
@@ -99,6 +109,8 @@ class OwnerModel {
       'references': references,
       'isOwner': isOwner,
       'comments': comments.map((e) => e.toJson()).toList(),
+      'taxNumber': taxNumber,
+      'taxOffice': taxOffice,
     };
   }
 }

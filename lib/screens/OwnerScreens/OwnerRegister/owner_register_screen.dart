@@ -14,6 +14,7 @@ import 'package:bi_suru_app/services/hive_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/extensions.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
+import 'package:bi_suru_app/utils/text_input_formatters.dart';
 import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
@@ -35,6 +36,8 @@ class _OwnerRegisterScreenState extends State<OwnerRegisterScreen> {
   TextEditingController passwordAgainController = TextEditingController();
   TextEditingController cityController = TextEditingController();
   TextEditingController districtController = TextEditingController();
+  TextEditingController taxOfficeController = TextEditingController();
+  TextEditingController taxNumberController = TextEditingController();
   Il? selectedCity;
   Ilce? selectedDistrict;
   bool acceptTerms = false;
@@ -72,6 +75,8 @@ class _OwnerRegisterScreenState extends State<OwnerRegisterScreen> {
       email: emailController.text,
       city: selectedCity!.ilAdi,
       district: selectedDistrict!.ilceAdi,
+      taxOffice: taxOfficeController.text,
+      taxNumber: taxNumberController.text,
       enable: false,
       products: [],
       comments: [],
@@ -108,191 +113,229 @@ class _OwnerRegisterScreenState extends State<OwnerRegisterScreen> {
               ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-              ),
-              padding: EdgeInsets.all(20),
-              child: Form(
-                key: formKey,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      MyTextfield(
-                        text: 'Ad soyad',
-                        controller: nameController,
-                        validator: (text) {
-                          if (text!.isEmpty) {
-                            return 'Ad soyad boş bırakılamaz';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      MyTextfield(
-                        text: 'E-posta',
-                        controller: emailController,
-                        validator: (text) {
-                          if (text!.isEmpty) {
-                            return 'E-posta boş bırakılamaz';
-                          }
-                          if (!text.isValidEmail()) {
-                            return 'Geçerli bir e-posta giriniz';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      MyTextfield(
-                        text: 'Telefon',
-                        controller: phoneController,
-                        validator: (text) {
-                          if (text!.isEmpty) {
-                            return 'Telefon boş bırakılamaz';
-                          }
-                          if (text.length < 9 || text.length > 11) {
-                            return 'Geçerli bir telefon giriniz';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      MyTextfield(
-                        text: 'Şehir',
-                        readOnly: true,
-                        controller: cityController,
-                        onTap: () async {
-                          Il? result = await Navigator.push(context, MaterialPageRoute(builder: (context) => SelectCityScreen()));
-                          if (result != null) {
-                            cityController.text = result.ilAdi;
-                            selectedCity = result;
-                            setState(() {});
-                          }
-                        },
-                        validator: (text) {
-                          if (text!.isEmpty) {
-                            return 'Şehir boş bırakılamaz';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      MyTextfield(
-                        text: 'İlçe',
-                        readOnly: true,
-                        controller: districtController,
-                        onTap: () async {
-                          if (selectedCity == null) {
-                            MySnackbar.show(context, message: 'Lütfen önce şehir seçiniz');
-                            return;
-                          }
-                          Ilce? result = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SelectDistrictScreen(
-                                        selectedCity: selectedCity!,
-                                      )));
-                          if (result != null) {
-                            districtController.text = result.ilceAdi;
-                            selectedDistrict = result;
-                            setState(() {});
-                          }
-                        },
-                        validator: (text) {
-                          if (text!.isEmpty) {
-                            return 'İlçe boş bırakılamaz';
-                          }
-
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      MyTextfield(
-                        text: 'Şifre',
-                        controller: passwordController,
-                        validator: (text) {
-                          if (text!.isEmpty) {
-                            return 'Şifre boş bırakılamaz';
-                          }
-                          if (text.length < 6) {
-                            return 'Şifre en az 6 karakter olmalıdır';
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: 10),
-                      MyTextfield(
-                        text: 'Şifre Tekrar',
-                        controller: passwordAgainController,
-                        validator: (text) {
-                          if (text!.isEmpty) {
-                            return 'Şifre boş bırakılamaz';
-                          }
-                          if (text.length < 6) {
-                            return 'Şifre en az 6 karakter olmalıdır';
-                          }
-                          if (text != passwordController.text) {
-                            return 'Şifreler uyuşmuyor';
-                          }
-                          return null;
-                        },
-                      ),
-                      CheckboxListTile(
-                        dense: true,
-                        controlAffinity: ListTileControlAffinity.leading,
-                        value: acceptTerms,
-                        onChanged: (val) {
-                          setState(() {
-                            acceptTerms = val!;
-                          });
-                        },
-                        title: Text('Kullanım koşullarını okudum, anladım ve kabul ediyorum.'),
-                      ),
-                      SizedBox(height: 20),
-                      MyButton(
-                          text: 'Kayıt Ol',
-                          onPressed: () async {
-                            if (!formKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tüm alanları doldurunuz.')));
-                              return;
+          SafeArea(
+            bottom: false,
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                ),
+                padding: EdgeInsets.all(20),
+                child: Form(
+                  key: formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        MyTextfield(
+                          text: 'Ad soyad',
+                          controller: nameController,
+                          keyboardType: TextInputType.name,
+                          inputFormatters: [
+                            denyNumbers,
+                          ],
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Ad soyad boş bırakılamaz';
                             }
-                            if (!acceptTerms) {
-                              MySnackbar.show(context, message: 'Kullanım koşullarını kabul etmelisiniz');
-                              return;
-                            }
-                            await register();
-                          }),
-                      SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Hesabın var mı?'),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'Giriş Yap',
-                              style: TextStyle(color: MyColors.red),
-                            ),
-                          ),
-                        ],
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
-                        },
-                        child: Text(
-                          'Kullanıcı Girişi',
-                          style: TextStyle(color: MyColors.red),
+                            return null;
+                          },
                         ),
-                      ),
-                      SizedBox(height: 30),
-                    ],
+                        SizedBox(height: 10),
+                        MyTextfield(
+                          text: 'E-posta',
+                          controller: emailController,
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'E-posta boş bırakılamaz';
+                            }
+                            if (!text.isValidEmail()) {
+                              return 'Geçerli bir e-posta giriniz';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        MyTextfield(
+                          text: 'Telefon',
+                          controller: phoneController,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            allowNumbers,
+                            denyCharacters,
+                          ],
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Telefon boş bırakılamaz';
+                            }
+                            if (text.length < 9 || text.length > 11) {
+                              return 'Geçerli bir telefon giriniz';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        MyTextfield(
+                          text: 'Vergi Numarası',
+                          controller: taxNumberController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [allowNumbers],
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Vergi no boş bırakılamaz';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        MyTextfield(
+                          text: 'Vergi dairesi',
+                          controller: taxOfficeController,
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Vergi dairesi boş bırakılamaz';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        MyTextfield(
+                          text: 'Şehir',
+                          readOnly: true,
+                          controller: cityController,
+                          onTap: () async {
+                            Il? result = await Navigator.push(context, MaterialPageRoute(builder: (context) => SelectCityScreen()));
+                            if (result != null) {
+                              cityController.text = result.ilAdi;
+                              selectedCity = result;
+                              setState(() {});
+                            }
+                          },
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Şehir boş bırakılamaz';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        MyTextfield(
+                          text: 'İlçe',
+                          readOnly: true,
+                          controller: districtController,
+                          onTap: () async {
+                            if (selectedCity == null) {
+                              MySnackbar.show(context, message: 'Lütfen önce şehir seçiniz');
+                              return;
+                            }
+                            Ilce? result = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SelectDistrictScreen(
+                                          selectedCity: selectedCity!,
+                                        )));
+                            if (result != null) {
+                              districtController.text = result.ilceAdi;
+                              selectedDistrict = result;
+                              setState(() {});
+                            }
+                          },
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'İlçe boş bırakılamaz';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        MyTextfield(
+                          text: 'Şifre',
+                          controller: passwordController,
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Şifre boş bırakılamaz';
+                            }
+                            if (text.length < 6) {
+                              return 'Şifre en az 6 karakter olmalıdır';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        MyTextfield(
+                          text: 'Şifre Tekrar',
+                          controller: passwordAgainController,
+                          validator: (text) {
+                            if (text!.isEmpty) {
+                              return 'Şifre boş bırakılamaz';
+                            }
+                            if (text.length < 6) {
+                              return 'Şifre en az 6 karakter olmalıdır';
+                            }
+                            if (text != passwordController.text) {
+                              return 'Şifreler uyuşmuyor';
+                            }
+                            return null;
+                          },
+                        ),
+                        CheckboxListTile(
+                          dense: true,
+                          controlAffinity: ListTileControlAffinity.leading,
+                          value: acceptTerms,
+                          onChanged: (val) {
+                            setState(() {
+                              acceptTerms = val!;
+                            });
+                          },
+                          title: Text('Kullanım koşullarını okudum, anladım ve kabul ediyorum.'),
+                        ),
+                        SizedBox(height: 20),
+                        MyButton(
+                            text: 'Kayıt Ol',
+                            onPressed: () async {
+                              if (!formKey.currentState!.validate()) {
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tüm alanları doldurunuz.')));
+                                return;
+                              }
+                              if (!acceptTerms) {
+                                MySnackbar.show(context, message: 'Kullanım koşullarını kabul etmelisiniz');
+                                return;
+                              }
+                              await register();
+                            }),
+                        SizedBox(height: 20),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text('Hesabın var mı?'),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text(
+                                'Giriş Yap',
+                                style: TextStyle(color: MyColors.red),
+                              ),
+                            ),
+                          ],
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => LoginScreen()));
+                          },
+                          child: Text(
+                            'Kullanıcı Girişi',
+                            style: TextStyle(color: MyColors.red),
+                          ),
+                        ),
+                        SizedBox(height: 30),
+                      ],
+                    ),
                   ),
                 ),
               ),

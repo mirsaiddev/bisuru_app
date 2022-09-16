@@ -1,6 +1,7 @@
 import 'package:bi_suru_app/models/comment_model.dart';
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
+import 'package:bi_suru_app/models/purchase.dart';
 import 'package:bi_suru_app/models/reference.dart';
 import 'package:bi_suru_app/models/responses/get_user_response.dart';
 import 'package:bi_suru_app/models/user_model.dart';
@@ -106,6 +107,11 @@ class DatabaseService {
     return stream;
   }
 
+  Stream<DatabaseEvent> purchasesStream(String userId) {
+    Stream<DatabaseEvent> stream = firebaseDatabase.ref().child('users').child(userId).child('purchases').onValue;
+    return stream;
+  }
+
   Future<List<OwnerModel>> getAllOwnerModels(String city) async {
     DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('owners').orderByChild('city').equalTo(city).get();
     Map ownersMap = dataSnapshot.value as Map;
@@ -148,7 +154,15 @@ class DatabaseService {
     return firebaseDatabase.ref().child('users').child(uid).onValue;
   }
 
+  Stream<DatabaseEvent> ownerStream(String ownerId) {
+    return firebaseDatabase.ref().child('owners').child(ownerId).onValue;
+  }
+
   Future<void> addComment(String ownerUid, CommentModel comment) async {
     await firebaseDatabase.ref().child('owners').child(ownerUid).child('comments').push().set(comment.toMap());
+  }
+
+  Future<void> addPurchase({required String userId, required Purchase purchase}) async {
+    await firebaseDatabase.ref().child('users').child(userId).child('purchases').push().set(purchase.toMap());
   }
 }

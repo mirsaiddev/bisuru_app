@@ -28,6 +28,7 @@ class _OwnerPlaceState extends State<OwnerPlace> {
   TextEditingController nameController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   TextEditingController longDescriptionController = TextEditingController();
+  TextEditingController contactInfoController = TextEditingController();
   TextEditingController categoryController = TextEditingController();
   TextEditingController locationController = TextEditingController();
   String? placePicture;
@@ -47,6 +48,7 @@ class _OwnerPlaceState extends State<OwnerPlace> {
     nameController.text = ownerModel.placeName ?? '';
     descriptionController.text = ownerModel.placeDescription ?? '';
     longDescriptionController.text = ownerModel.placeLongDescription ?? '';
+    contactInfoController.text = ownerModel.contactInfo ?? '';
     categoryController.text = ownerModel.placeCategory != null ? ownerModel.placeCategory.toString() : '';
     locationController.text = ownerModel.placeAddress != null ? 'Güncellemek için tıklayınız' : '';
     location = ownerModel.placeAddress != null ? LatLng(ownerModel.placeAddress!['lat'], ownerModel.placeAddress!['long']) : null;
@@ -82,6 +84,10 @@ class _OwnerPlaceState extends State<OwnerPlace> {
     if (categoryController.text.isNotEmpty) {
       data['placeCategory'] = (categoryController.text);
       ownerModel.placeCategory = (categoryController.text);
+    }
+    if (contactInfoController.text.isNotEmpty) {
+      data['contactInfo'] = contactInfoController.text;
+      ownerModel.contactInfo = contactInfoController.text;
     }
     if (location != null) {
       data['placeAddress'] = {
@@ -239,6 +245,18 @@ class _OwnerPlaceState extends State<OwnerPlace> {
                         validator: (val) {
                           if (val!.isEmpty) {
                             return 'Mağaza uzun açıklaması boş bırakılamaz';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      MyTextfield(
+                        text: 'İletişim',
+                        controller: contactInfoController,
+                        maxLines: 2,
+                        validator: (val) {
+                          if (val!.isEmpty) {
+                            return 'İletişim bilgisi boş bırakılamaz';
                           }
                           return null;
                         },
