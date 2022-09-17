@@ -34,6 +34,7 @@ class _EditProductState extends State<EditProduct> {
   final TextEditingController comissionController = TextEditingController();
   String? productImage;
   var formKey = GlobalKey<FormState>();
+  bool enable = true;
 
   Future<void> createProduct() async {
     bool validate = formKey.currentState!.validate();
@@ -52,11 +53,12 @@ class _EditProductState extends State<EditProduct> {
       image: productImage!,
       ownerUid: ownerModel.uid!,
       comments: [],
+      enable: enable,
     );
 
     await DatabaseService().editProductModel(ownerUid: ownerModel.uid!, productModel: productModel);
     Navigator.pop(context);
-    MySnackbar.show(context, message: 'Başarıyla ürün oluşturuldu.');
+    MySnackbar.show(context, message: 'Başarıyla ürün güncellendi.');
   }
 
   void setVariables() {
@@ -65,6 +67,7 @@ class _EditProductState extends State<EditProduct> {
     priceController.text = widget.productModel.price.toString();
     comissionController.text = widget.productModel.comission.toString();
     productImage = widget.productModel.image;
+    enable = widget.productModel.enable;
     setState(() {});
   }
 
@@ -199,12 +202,12 @@ class _EditProductState extends State<EditProduct> {
                           SizedBox(width: 10),
                           Expanded(
                             child: MyTextfield(
-                              text: 'Komisyon Oranı',
+                              text: 'İndirim Oranı',
                               prefixText: '%',
                               controller: comissionController,
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Komisyon oranı boş bırakılamaz';
+                                  return 'İndirim oranı boş bırakılamaz';
                                 }
                                 return null;
                               },
@@ -212,9 +215,17 @@ class _EditProductState extends State<EditProduct> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 10),
+                      MyListTile(
+                        child: SwitchListTile(
+                          value: enable,
+                          onChanged: (value) => setState(() => enable = value),
+                          title: Text('Satın alım aktif'),
+                        ),
+                      ),
                       SizedBox(height: 20),
                       MyButton(
-                        text: 'Oluştur',
+                        text: 'Güncelle',
                         onPressed: createProduct,
                       ),
                     ],

@@ -1,6 +1,7 @@
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/screens/OwnerScreens/EditOwnerProfile/edit_owner_profile.dart';
 import 'package:bi_suru_app/screens/Splash/splash_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/EditUserProfile/edit_user_profile.dart';
 import 'package:bi_suru_app/services/auth_service.dart';
@@ -34,7 +35,7 @@ class _OwnerProfileState extends State<OwnerProfile> {
                 showBackButton: false,
                 action: IconButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditUserProfile()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditOwnerProfile()));
                   },
                   icon: Icon(Icons.edit),
                 ),

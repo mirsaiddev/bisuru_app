@@ -32,6 +32,7 @@ class _NewProductState extends State<NewProduct> {
   final TextEditingController comissionController = TextEditingController();
   String? productImage = 'https://cdn.yemek.com/mnresize/1250/833/uploads/2019/03/kremali-makarna-8.jpg';
   var formKey = GlobalKey<FormState>();
+  bool enable = true;
 
   Future<void> createProduct() async {
     bool validate = formKey.currentState!.validate();
@@ -50,6 +51,7 @@ class _NewProductState extends State<NewProduct> {
       image: productImage!,
       ownerUid: ownerModel.uid!,
       comments: [],
+      enable: enable,
     );
     await DatabaseService().createProduct(ownerUid: ownerModel.uid!, productModel: productModel);
     Navigator.pop(context);
@@ -181,18 +183,26 @@ class _NewProductState extends State<NewProduct> {
                           SizedBox(width: 10),
                           Expanded(
                             child: MyTextfield(
-                              text: 'Komisyon Oranı',
+                              text: 'İndirim Oranı',
                               prefixText: '%',
                               controller: comissionController,
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return 'Komisyon oranı boş bırakılamaz';
+                                  return 'İndirim oranı boş bırakılamaz';
                                 }
                                 return null;
                               },
                             ),
                           ),
                         ],
+                      ),
+                      SizedBox(height: 10),
+                      MyListTile(
+                        child: SwitchListTile(
+                          value: enable,
+                          onChanged: (value) => setState(() => enable = value),
+                          title: Text('Satın alım aktif'),
+                        ),
                       ),
                       SizedBox(height: 20),
                       MyButton(

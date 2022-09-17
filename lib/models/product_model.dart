@@ -11,6 +11,7 @@ class ProductModel {
   final String image;
   final List comments;
   final String ownerUid;
+  final bool enable;
   ProductModel({
     required this.id,
     required this.name,
@@ -20,6 +21,7 @@ class ProductModel {
     required this.image,
     required this.comments,
     required this.ownerUid,
+    required this.enable,
   });
 
   ProductModel copyWith({
@@ -31,6 +33,7 @@ class ProductModel {
     String? image,
     List? comments,
     String? ownerUid,
+    bool? enable,
   }) {
     return ProductModel(
       id: id ?? this.id,
@@ -41,6 +44,7 @@ class ProductModel {
       image: image ?? this.image,
       comments: comments ?? this.comments,
       ownerUid: ownerUid ?? this.ownerUid,
+      enable: enable ?? this.enable,
     );
   }
 
@@ -55,6 +59,7 @@ class ProductModel {
     result.addAll({'image': image});
     result.addAll({'comments': comments});
     result.addAll({'ownerUid': ownerUid});
+    result.addAll({'enable': enable});
 
     return result;
   }
@@ -69,6 +74,7 @@ class ProductModel {
       image: map['image'] ?? '',
       comments: List.from(map['comments'] ?? []),
       ownerUid: map['ownerUid'] ?? '',
+      enable: map['enable'] ?? true,
     );
   }
 

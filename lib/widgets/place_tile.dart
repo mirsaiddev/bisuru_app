@@ -52,21 +52,22 @@ class ProductTile extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => QrCodeScreen(
-                                productModel: productModel,
-                              )));
-                },
-                icon: Icon(Icons.qr_code_2, size: 30),
-                iconSize: 30,
-              ),
-            )
+            if (productModel.enable)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => QrCodeScreen(
+                                  productModel: productModel,
+                                )));
+                  },
+                  icon: Icon(Icons.qr_code_2, size: 30),
+                  iconSize: 30,
+                ),
+              )
           ],
         ),
       ),

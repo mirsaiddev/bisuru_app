@@ -52,7 +52,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     GestureDetector(
                       onTap: () {
                         BottomNavBarProvider bottomNavBarProvider = Provider.of<BottomNavBarProvider>(context, listen: false);
-                        bottomNavBarProvider.setCurrentIndex(2);
+                        bottomNavBarProvider.setCurrentIndex(3);
                       },
                       child: Container(
                         padding: EdgeInsets.all(12),

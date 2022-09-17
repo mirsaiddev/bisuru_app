@@ -84,7 +84,7 @@ class _QrCodeReaderState extends State<QrCodeReader> {
             String createdDate = data['createdDate'];
             Duration difference = DateTime.now().difference(DateTime.parse(createdDate));
 
-            if (difference.inMinutes < 10) {
+            if (difference.inSeconds < 30) {
               if (ownerUid != ownerModel.uid) {
                 if (!qrCodeReaded) {
                   qrCodeReaded = true;
