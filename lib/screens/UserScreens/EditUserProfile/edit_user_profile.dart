@@ -112,7 +112,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MyAppBar(title: 'Profilim', showBackButton: false),
+              MyAppBar(title: 'Profilim', showBackButton: true),
               SizedBox(height: 10),
               MyListTile(
                 onTap: () async {
@@ -259,7 +259,7 @@ class _EditUserProfileState extends State<EditUserProfile> {
                       ),
                       SizedBox(height: 20),
                       MyButton(
-                        text: 'GÜNCELLE',
+                        text: 'Güncelle',
                         onPressed: update,
                       ),
                     ],

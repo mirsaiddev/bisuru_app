@@ -119,6 +119,11 @@ class DatabaseService {
     return owners;
   }
 
+  Stream<DatabaseEvent> allPlacesStream(String city) {
+    Stream<DatabaseEvent> stream = firebaseDatabase.ref().child('owners').orderByChild('city').equalTo(city).onValue;
+    return stream;
+  }
+
   Stream<DatabaseEvent> ownerModelStream(String ownerId) {
     return firebaseDatabase.ref().child('owners').child(ownerId).onValue;
   }

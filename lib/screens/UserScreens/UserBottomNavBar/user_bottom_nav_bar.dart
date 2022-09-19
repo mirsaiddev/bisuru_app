@@ -19,9 +19,9 @@ class _UserBottomNavBarState extends State<UserBottomNavBar> {
   }
 
   void init() {
-    PlacesProvider placesProvider = Provider.of<PlacesProvider>(context, listen: false);
-    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
-    placesProvider.getAllPlaces(userProvider.userModel!.city);
+    // PlacesProvider placesProvider = Provider.of<PlacesProvider>(context, listen: false);
+    // UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    // placesProvider.getAllPlaces(userProvider.userModel!.city);
   }
 
   @override

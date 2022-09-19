@@ -19,7 +19,7 @@ class MyLogoWidget extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(padding),
         child: Image.asset(
-          'lib/assets/images/logo.png',
+          'lib/assets/images/new_logo.png',
           color: MyColors.red2,
         ),
       ),
@@ -47,7 +47,7 @@ class MyLogoWidgetColored extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(padding),
         child: Image.asset(
-          'lib/assets/images/logo.png',
+          'lib/assets/images/new_logo.png',
           color: Colors.white,
         ),
       ),

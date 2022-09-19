@@ -3,23 +3,29 @@ import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/screens/UserScreens/PlaceDetail/place_detail.dart';
 import 'package:bi_suru_app/services/database_service.dart';
+import 'package:bi_suru_app/theme/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
-class PlaceWidget extends StatefulWidget {
-  const PlaceWidget({
+class PlaceWidgetMap extends StatefulWidget {
+  const PlaceWidgetMap({
     Key? key,
     required this.ownerModel,
+    required this.onClose,
   }) : super(key: key);
 
   final OwnerModel ownerModel;
+  final Function onClose;
 
   @override
-  State<PlaceWidget> createState() => _PlaceWidgetState();
+  State<PlaceWidgetMap> createState() => _PlaceWidgetMapState();
 }
 
-class _PlaceWidgetState extends State<PlaceWidget> {
+class _PlaceWidgetMapState extends State<PlaceWidgetMap> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
@@ -41,7 +47,27 @@ class _PlaceWidgetState extends State<PlaceWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                    onPressed: () async {
+                      MapsLauncher.launchCoordinates(widget.ownerModel.placeAddress!['lat'], widget.ownerModel.placeAddress!['long']);
+                    },
+                    icon: Image.asset('lib/assets/images/open_map.png', width: 26)),
+                Text(
+                  widget.ownerModel.placeName!,
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+                IconButton(
+                    onPressed: () {
+                      widget.onClose();
+                    },
+                    icon: Icon(Icons.close)),
+              ],
+            ),
             Expanded(
+              flex: 3,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
@@ -53,18 +79,37 @@ class _PlaceWidgetState extends State<PlaceWidget> {
               ),
             ),
             SizedBox(height: 10),
-            Text(
-              widget.ownerModel.placeDescription!,
-              maxLines: 3,
-              style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
-              overflow: TextOverflow.ellipsis,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.ownerModel.placeDescription!,
+                  maxLines: 3,
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Container(
+                  decoration: BoxDecoration(color: MyColors.grey, borderRadius: BorderRadius.circular(6)),
+                  height: 30,
+                  padding: EdgeInsets.all(6),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Icon(Icons.star, color: MyColors.yellow, size: 16),
+                        SizedBox(width: 2),
+                        Text(widget.ownerModel.getAverageRating().toStringAsFixed(2), style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
+                  flex: 1,
                   child: Text(
-                    widget.ownerModel.placeName!,
+                    '${widget.ownerModel.placeRealAddress}',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -89,7 +134,12 @@ class _PlaceWidgetState extends State<PlaceWidget> {
                   ),
                 ),
               ],
-            )
+            ),
+            SizedBox(height: 10),
+            Text(
+              '${widget.ownerModel.contactInfo}',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),

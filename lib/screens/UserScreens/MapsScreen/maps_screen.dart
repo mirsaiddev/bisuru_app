@@ -4,6 +4,7 @@ import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/providers/places_provider.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:bi_suru_app/widgets/place_widget.dart';
+import 'package:bi_suru_app/widgets/place_widget_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -36,7 +37,9 @@ class _MapsScreenState extends State<MapsScreen> {
       markers.add(Marker(
         markerId: MarkerId(place.uid!),
         position: LatLng(place.placeAddress!['lat'], place.placeAddress!['long']),
+        flat: true,
         icon: markerIcon!,
+        draggable: true,
         onTap: () {
           if (controller != null) {
             controller!.animateCamera(
@@ -136,7 +139,8 @@ class _MapsScreenState extends State<MapsScreen> {
                         alignment: Alignment.bottomCenter,
                         children: [
                           GoogleMap(
-                            myLocationButtonEnabled: false,
+                            myLocationButtonEnabled: true,
+                            myLocationEnabled: true,
                             initialCameraPosition: initialLocation!,
                             onMapCreated: (GoogleMapController _controller) async {
                               controller = _controller;
@@ -150,8 +154,14 @@ class _MapsScreenState extends State<MapsScreen> {
                             Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: SizedBox(
-                                height: 250,
-                                child: PlaceWidget(ownerModel: selectedOwner!),
+                                height: 300,
+                                child: PlaceWidgetMap(
+                                    ownerModel: selectedOwner!,
+                                    onClose: () {
+                                      setState(() {
+                                        selectedOwner = null;
+                                      });
+                                    }),
                               ),
                             ),
                         ],

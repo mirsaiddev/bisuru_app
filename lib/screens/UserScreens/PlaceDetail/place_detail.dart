@@ -223,9 +223,6 @@ class _PlaceDetailState extends State<PlaceDetail> {
                         ),
                         SizedBox(height: 10),
                         MyListTile(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => AboutOwner(ownerModel: ownerModel)));
-                          },
                           padding: 16,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -253,43 +250,21 @@ class _PlaceDetailState extends State<PlaceDetail> {
                                   onTap: () {
                                     Navigator.push(context, MaterialPageRoute(builder: (context) => MapsScreen(ownerModel: ownerModel)));
                                   },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Icon(Icons.map_outlined),
-                                      Text(
-                                        'Lokasyon',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Image.asset('lib/assets/images/gps.png', width: 30),
+                                        Text(
+                                          'Lokasyon',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              VerticalDivider(
-                                thickness: 1,
-                                indent: 10,
-                                endIndent: 10,
-                              ),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => PlaceAllProducts(ownerModel: ownerModel)));
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Icon(Icons.person),
-                                      Text(
-                                        'Menü',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -308,18 +283,21 @@ class _PlaceDetailState extends State<PlaceDetail> {
                                                   owner: ownerModel,
                                                 )));
                                   },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Icon(Icons.comment),
-                                      Text(
-                                        'Yorumlar',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        Image.asset('lib/assets/images/comment.png', width: 30),
+                                        Text(
+                                          'Yorumlar',
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

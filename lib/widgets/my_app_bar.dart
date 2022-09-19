@@ -8,11 +8,13 @@ class MyAppBar extends StatelessWidget {
     required this.title,
     required this.showBackButton,
     this.action,
+    this.gradient,
   }) : super(key: key);
 
   final String title;
   final bool showBackButton;
   final Widget? action;
+  final Gradient? gradient;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class MyAppBar extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
+        gradient: gradient,
       ),
       padding: EdgeInsets.all(10),
       child: Row(

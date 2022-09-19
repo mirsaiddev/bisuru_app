@@ -7,9 +7,11 @@ import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/CategoryPlaces/category_places.dart';
 import 'package:bi_suru_app/screens/UserScreens/Places/places_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/Search/search_screen.dart';
+import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
 import 'package:bi_suru_app/widgets/place_widget.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,7 +29,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     PlacesProvider placesProvider = Provider.of<PlacesProvider>(context);
     UserProvider userProvider = Provider.of<UserProvider>(context);
     UserModel userModel = userProvider.userModel!;
-    List<OwnerModel> places = placesProvider.places;
     List<String> categories = systemProvider.categories;
 
     return Scaffold(
@@ -103,6 +104,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Kategoriler', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black)),
+                    TextButton(
+                        onPressed: () {
+                          BottomNavBarProvider bottomNavBarProvider = Provider.of<BottomNavBarProvider>(context, listen: false);
+                          bottomNavBarProvider.setCurrentIndex(1);
+                        },
+                        child: Text('Tümünü Gör'))
                   ],
                 ),
                 SizedBox(height: 14),
@@ -155,14 +162,28 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         child: Text('Tümünü Gör'))
                   ],
                 ),
-                GridView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                  itemCount: places.length,
-                  itemBuilder: (context, index) {
-                    OwnerModel ownerModel = places[index];
-                    return PlaceWidget(ownerModel: ownerModel);
+                StreamBuilder<DatabaseEvent>(
+                  stream: DatabaseService().allPlacesStream(userModel.city),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return SizedBox();
+                    }
+                    List<OwnerModel> places = (snapshot.data!.snapshot.value as Map)
+                        .entries
+                        .map((e) => OwnerModel.fromJson(e.value))
+                        .where((element) => element.placeIsOpen())
+                        .toList();
+                    placesProvider.places = places;
+                    return GridView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                      itemCount: places.length,
+                      itemBuilder: (context, index) {
+                        OwnerModel ownerModel = places[index];
+                        return PlaceWidget(ownerModel: ownerModel);
+                      },
+                    );
                   },
                 ),
               ],

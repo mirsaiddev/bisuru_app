@@ -52,6 +52,8 @@ class _SelectLocationState extends State<SelectLocation> {
                     borderRadius: BorderRadius.circular(10),
                     child: GoogleMap(
                       initialCameraPosition: initialLocation,
+                      myLocationButtonEnabled: true,
+                      myLocationEnabled: true,
                       onMapCreated: (GoogleMapController _controller) async {
                         controller = _controller;
                         controller!.setMapStyle(await rootBundle.loadString('lib/assets/txt/map_style.txt'));

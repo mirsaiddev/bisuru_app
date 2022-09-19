@@ -13,6 +13,7 @@ import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +51,7 @@ class _OwnerPlaceState extends State<OwnerPlace> {
     longDescriptionController.text = ownerModel.placeLongDescription ?? '';
     contactInfoController.text = ownerModel.contactInfo ?? '';
     categoryController.text = ownerModel.placeCategory != null ? ownerModel.placeCategory.toString() : '';
-    locationController.text = ownerModel.placeAddress != null ? 'Güncellemek için tıklayınız' : '';
+    locationController.text = ownerModel.placeRealAddress != null ? ownerModel.placeRealAddress! : '';
     location = ownerModel.placeAddress != null ? LatLng(ownerModel.placeAddress!['lat'], ownerModel.placeAddress!['long']) : null;
     placePicture = ownerModel.placePicture;
     if (!ownerModel.placeIsOpen() && ownerModel.enable) {
@@ -88,6 +89,10 @@ class _OwnerPlaceState extends State<OwnerPlace> {
     if (contactInfoController.text.isNotEmpty) {
       data['contactInfo'] = contactInfoController.text;
       ownerModel.contactInfo = contactInfoController.text;
+    }
+    if (locationController.text.isNotEmpty) {
+      data['placeRealAddress'] = locationController.text;
+      ownerModel.placeRealAddress = locationController.text;
     }
     if (location != null) {
       data['placeAddress'] = {
@@ -209,6 +214,33 @@ class _OwnerPlaceState extends State<OwnerPlace> {
               ),
               SizedBox(height: 10),
               MyListTile(
+                  child: GridView.count(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                crossAxisCount: 5,
+                crossAxisSpacing: 10,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(color: MyColors.lightGrey, borderRadius: BorderRadius.circular(10)),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(ownerModel.placePicture!, fit: BoxFit.cover),
+                    ),
+                  ),
+                  for (int i = 0; i < 4; i++)
+                    Container(
+                      decoration: BoxDecoration(color: MyColors.lightGrey, borderRadius: BorderRadius.circular(10)),
+                      child: Center(
+                        child: Icon(
+                          CupertinoIcons.camera_fill,
+                          color: MyColors.lightBlue,
+                        ),
+                      ),
+                    ),
+                ],
+              )),
+              SizedBox(height: 10),
+              MyListTile(
                 padding: 14,
                 child: Form(
                   key: formKey,
@@ -290,7 +322,12 @@ class _OwnerPlaceState extends State<OwnerPlace> {
                         onTap: () async {
                           LatLng? _location = await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectLocation()));
                           if (_location != null) {
-                            locationController.text = 'Güncellemek için tıklayınız';
+                            List<Placemark> placemarks = await placemarkFromCoordinates(_location.latitude, _location.longitude);
+                            Placemark placemark = placemarks.first;
+                            String city = placemark.locality!;
+                            String street = placemark.street!;
+                            String address = '$city, $street';
+                            locationController.text = address;
                             location = _location;
                             setState(() {});
                           }
@@ -304,7 +341,7 @@ class _OwnerPlaceState extends State<OwnerPlace> {
                       ),
                       SizedBox(height: 20),
                       MyButton(
-                        text: 'GÜNCELLE',
+                        text: 'Güncelle',
                         onPressed: update,
                       ),
                     ],

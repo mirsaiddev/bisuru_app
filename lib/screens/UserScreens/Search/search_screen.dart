@@ -1,5 +1,6 @@
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/providers/places_provider.dart';
+import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
 import 'package:bi_suru_app/widgets/place_widget.dart';
@@ -43,6 +44,8 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void getPlaces() {
     PlacesProvider placesProvider = Provider.of<PlacesProvider>(context, listen: false);
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    placesProvider.getAllPlaces(userProvider.userModel!.city);
     places = placesProvider.places;
     setState(() {});
   }

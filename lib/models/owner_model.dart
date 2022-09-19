@@ -12,6 +12,7 @@ class OwnerModel {
   String? placeName, placeDescription, placeLongDescription, placePicture, contactInfo;
   Map? placeAddress;
   String? placeCategory;
+  String? placeRealAddress;
   bool enable;
   final List products;
   final List references;
@@ -27,6 +28,7 @@ class OwnerModel {
         placePicture != null &&
         placeCategory != null &&
         placeLongDescription != null &&
+        placeRealAddress != null &&
         contactInfo != null;
   }
 
@@ -55,6 +57,7 @@ class OwnerModel {
     this.placeAddress,
     this.placePicture,
     this.placeCategory,
+    this.placeRealAddress,
     required this.enable,
     required this.products,
     required this.comments,
@@ -78,6 +81,7 @@ class OwnerModel {
       placeAddress: json['placeAddress'],
       placePicture: json['placePicture'],
       placeCategory: json['placeCategory'],
+      placeRealAddress: json['placeRealAddress'],
       enable: json['enable'] ?? false,
       products: json['products'] != null ? (json['products'].entries).map((e) => ProductModel.fromMap(e.value)).toList() : [],
       references: json['references'] != null ? (json['references'].entries).map((e) => Reference.fromMap(e.value)).toList() : [],
@@ -100,6 +104,7 @@ class OwnerModel {
       'placeName': placeName,
       'placeDescription': placeDescription,
       'placeLongDescription': placeLongDescription,
+      'placeRealAddress': placeRealAddress,
       'contactInfo': contactInfo,
       'placeAddress': placeAddress,
       'placePicture': placePicture,

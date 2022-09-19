@@ -260,7 +260,7 @@ class _EditOwnerProfileState extends State<EditOwnerProfile> {
                       ),
                       SizedBox(height: 20),
                       MyButton(
-                        text: 'GÜNCELLE',
+                        text: 'Güncelle',
                         onPressed: update,
                       ),
                     ],

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:bi_suru_app/models/product_model.dart';
+import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
@@ -62,57 +63,122 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    UserModel userModel = userProvider.userModel!;
+
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            children: [
-              MyAppBar(
-                title: 'Karekod',
-                showBackButton: true,
-                action: Center(child: Text(time)),
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: Builder(builder: (context) {
-                  if (qrData == null) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                  return MyListTile(
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: MyListTile(
-                            padding: 14,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+      body: Container(
+        height: height,
+        width: width,
+        decoration: BoxDecoration(
+          image: DecorationImage(image: AssetImage("lib/assets/images/background.png"), fit: BoxFit.cover),
+          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [MyColors.red2, MyColors.orange]),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: Column(
+              children: [
+                MyAppBar(
+                  title: 'Karekod',
+                  showBackButton: true,
+                  action: Center(child: Text(time)),
+                ),
+                SizedBox(height: 10),
+                Expanded(
+                  child: Builder(builder: (context) {
+                    if (qrData == null) {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    return MyListTile(
+                      color: Colors.transparent,
+                      // gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [MyColors.red2, MyColors.orange]),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10.0),
+                            child: MyListTile(
+                              color: Colors.white,
+                              padding: 14,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: double.infinity),
+                                        Text(
+                                          'Ürün',
+                                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                                        ),
+                                        Text(
+                                          '${widget.productModel.name}',
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    '${widget.productModel.price} ₺',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 10),
+                          MyListTile(
+                            color: Colors.white,
+                            child: Row(
                               children: [
-                                SizedBox(width: double.infinity),
-                                Text(
-                                  'Dikkat!',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                                ),
-                                Text(
-                                  'Güvenlik sebebiyle her 30 saniyede bir kod değişecektir.',
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white),
+                                Expanded(
+                                    child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(width: double.infinity),
+                                    Text(
+                                      'Müşteri',
+                                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                                    ),
+                                    Text(
+                                      '${userModel.fullName}',
+                                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black),
+                                    ),
+                                  ],
+                                )),
+                                CircleAvatar(
+                                  radius: 30,
+                                  backgroundImage: userModel.profilePicUrl != null ? NetworkImage(userModel.profilePicUrl!) : null,
+                                  child: userModel.profilePicUrl == null ? Icon(Icons.person, size: 30, color: Colors.grey) : null,
+                                  backgroundColor: MyColors.grey,
                                 ),
                               ],
                             ),
-                            color: MyColors.red,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(40.0),
-                          child: QrImage(data: qrData!),
-                        ),
-                      ],
-                    ),
-                  );
-                }),
-              ),
-            ],
+                          Expanded(
+                            child: Center(
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: 50),
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.white,
+                                ),
+                                child: QrImage(data: qrData!),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            ),
           ),
         ),
       ),
