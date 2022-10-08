@@ -155,6 +155,22 @@ class _UserProfileState extends State<UserProfile> {
                           ),
                         ),
                         SizedBox(height: 10),
+                      ] else ...[
+                        MyListTile(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => UserPremiumScreen()));
+                          },
+                          child: Row(
+                            children: [
+                              SizedBox(width: 6),
+                              Icon(Icons.add, color: Colors.black),
+                              Expanded(
+                                child: ListTile(title: Text('Premium Ol'), subtitle: Text('Premium olarak ürünlerin karekodlarını açabilirsiniz.')),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 10),
                       ],
                       MyListTile(
                         onTap: () {

@@ -129,9 +129,10 @@ class _UserPaymentScreenState extends State<UserPaymentScreen> {
                       );
                       if (response['status'] == 'success') {
                         userModel.premium = true;
+                        userProvider.notify();
                         await DatabaseService().buyPremium(isUser: true, uid: userModel.uid!);
                         Navigator.pop(context);
-                        MySnackbar.show(context, message: 'Başarılı bir şekilde ödeme yapıldı');
+                        MySnackbar.show(context, message: 'Abonelik başlatıldı');
                       } else {
                         MySnackbar.show(context, message: 'Ödeme sırasında bir hata oluştu : ${response['response']}');
                       }
