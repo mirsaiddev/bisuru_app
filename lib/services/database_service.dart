@@ -1,3 +1,4 @@
+import 'package:bi_suru_app/models/campaign.dart';
 import 'package:bi_suru_app/models/comment_model.dart';
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
@@ -70,6 +71,13 @@ class DatabaseService {
     return sliders.where((element) => element != null).toList().map((e) => e.toString()).toList();
   }
 
+  Future<List<Campaign>> getCampaigns() async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('campaigns').get();
+    List<Campaign> campaigns =
+        dataSnapshot.value != null ? (dataSnapshot.value! as Map).entries.toList().map((e) => Campaign.fromMap(e.value as Map)).toList() : [];
+    return campaigns;
+  }
+
   Future<void> createProduct({required String ownerUid, required ProductModel productModel}) async {
     await firebaseDatabase.ref().child('owners').child(ownerUid).child('products').push().set(productModel.toMap());
   }
@@ -129,6 +137,10 @@ class DatabaseService {
   }
 
   Future<void> savePlace(String uid, String ownerUid) async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('users').child(uid).child('savedPlaces').get();
+    if (dataSnapshot.value != null && (dataSnapshot.value as Map).values.contains(ownerUid)) {
+      return;
+    }
     await firebaseDatabase.ref().child('users').child(uid).child('savedPlaces').push().set(ownerUid);
   }
 
@@ -168,6 +180,78 @@ class DatabaseService {
   }
 
   Future<void> addPurchase({required String userId, required Purchase purchase}) async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('users').child(userId).get();
+    if (dataSnapshot.value != null) {
+      UserModel userModel = UserModel.fromJson(dataSnapshot.value as Map);
+      if (userModel.premium) {
+        await increasePoints(uid: userModel.uid!, points: 100);
+      }
+    }
     await firebaseDatabase.ref().child('users').child(userId).child('purchases').push().set(purchase.toMap());
+  }
+
+  Future<void> addPicture(String ownerUid, String picture) async {
+    await firebaseDatabase.ref().child('owners').child(ownerUid).child('placePictures').push().set(picture);
+  }
+
+  Future<void> removePicture(String ownerUid, String picture) async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('owners').child(ownerUid).child('placePictures').get();
+    Map pictures = dataSnapshot.value as Map;
+    String? key = pictures.entries.firstWhere((element) => element.value == picture, orElse: () => MapEntry('', '')).key;
+    if (key != null && key.isNotEmpty) {
+      await firebaseDatabase.ref().child('owners').child(ownerUid).child('placePictures').child(key).remove();
+    }
+  }
+
+  Future<void> joinToCampaign({required Campaign campaign, required String ownerUid}) async {
+    await firebaseDatabase.ref().child('campaigns').child(campaign.id).child('ownerModels').push().set(ownerUid);
+  }
+
+  Future<void> verifySms({required bool isUser, required String uid}) async {
+    await firebaseDatabase.ref().child(isUser ? 'users' : 'owners').child(uid).child('smsVerified').set(true);
+  }
+
+  Future<bool> checkPhoneExists(String phone, {required bool isUser}) async {
+    DataSnapshot dataSnapshotOwner = await firebaseDatabase.ref().child('users').orderByChild('phone').equalTo(phone).get();
+    DataSnapshot dataSnapshotUser = await firebaseDatabase.ref().child('owners').orderByChild('phone').equalTo(phone).get();
+    if (isUser) {
+      return dataSnapshotUser.exists;
+    } else {
+      return dataSnapshotOwner.exists;
+    }
+  }
+
+  Future<void> updateIsDeleted({required bool isUser, required String uid}) async {
+    await firebaseDatabase.ref().child(isUser ? 'users' : 'owners').child(uid).update({'isDeleted': true});
+  }
+
+  Future<int> getFreePurchaseCount() async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('system').child('freePurchaseCount').get();
+    return dataSnapshot.value as int;
+  }
+
+  Future<Map> getPrices() async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('system').child('prices').get();
+    return dataSnapshot.value as Map;
+  }
+
+  Stream<DatabaseEvent> categoriesStream() {
+    return firebaseDatabase.ref().child('system').child('categories').onValue;
+  }
+
+  Future<void> buyPremium({required bool isUser, required String uid}) async {
+    await firebaseDatabase.ref().child(isUser ? 'users' : 'owners').child(uid).update({'premium': true});
+  }
+
+  Future<void> increasePoints({required String uid, required int points}) async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('users').child(uid).child('points').get();
+    int _points = dataSnapshot.value as int;
+    await firebaseDatabase.ref().child('users').child(uid).update({'points': points + _points});
+  }
+
+  Future<void> decreasePoints({required String uid, required int points}) async {
+    DataSnapshot dataSnapshot = await firebaseDatabase.ref().child('users').child(uid).child('points').get();
+    int _points = dataSnapshot.value as int;
+    await firebaseDatabase.ref().child('users').child(uid).update({'points': _points - points});
   }
 }

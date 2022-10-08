@@ -79,7 +79,6 @@ class _ReferencesScreenState extends State<ReferencesScreen> {
                                           }
                                           Map userMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
                                           UserModel userModel = UserModel.fromJson(userMap);
-                                          print('dates: $dates');
                                           return MyListTile(
                                             child: Row(
                                               children: [
@@ -99,7 +98,25 @@ class _ReferencesScreenState extends State<ReferencesScreen> {
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                       Text(userModel.fullName, style: TextStyle(fontWeight: FontWeight.bold)),
-                                                      Text(reference.productName),
+                                                      Text(reference.productModel.name),
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(width: 10),
+                                                          Text(
+                                                            '${reference.productModel.price} ₺',
+                                                            style: TextStyle(
+                                                                fontSize: 16,
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.black38,
+                                                                decoration: TextDecoration.lineThrough),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          Text(
+                                                            '${reference.productModel.getDiscountPrice().toStringAsFixed(1)} ₺',
+                                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: MyColors.red),
+                                                          ),
+                                                        ],
+                                                      )
                                                     ],
                                                   ),
                                                 ),

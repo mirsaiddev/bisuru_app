@@ -14,6 +14,7 @@ import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/enums/auth_status.dart';
 import 'package:bi_suru_app/utils/extensions.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
+import 'package:bi_suru_app/widgets/forgot_password_dialog.dart';
 import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
@@ -29,7 +30,7 @@ class OwnerLoginScreen extends StatefulWidget {
 }
 
 class _OwnerLoginScreenState extends State<OwnerLoginScreen> {
-  TextEditingController emailController = kDebugMode ? TextEditingController(text: 'mirsaidik@gmail.com') : TextEditingController();
+  TextEditingController emailController = kDebugMode ? TextEditingController(text: 'c2canplt@gmail.com') : TextEditingController();
   TextEditingController passwordController = kDebugMode ? TextEditingController(text: '123456') : TextEditingController();
 
   final formKey = GlobalKey<FormState>();
@@ -126,6 +127,7 @@ class _OwnerLoginScreenState extends State<OwnerLoginScreen> {
                     MyTextfield(
                       text: 'Şifre',
                       controller: passwordController,
+                      obscureText: true,
                       validator: (text) {
                         if (text!.isEmpty) {
                           return 'Şifre boş bırakılamaz';
@@ -140,7 +142,12 @@ class _OwnerLoginScreenState extends State<OwnerLoginScreen> {
                     Align(
                       alignment: Alignment.topRight,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => ForgotPasswordDialog(),
+                          );
+                        },
                         child: Text(
                           'Şifremi Unuttum',
                           style: TextStyle(color: MyColors.red),
@@ -152,7 +159,7 @@ class _OwnerLoginScreenState extends State<OwnerLoginScreen> {
                       text: 'Giriş Yap',
                       onPressed: () async {
                         if (!formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tüm alanları doldurunuz.')));
+                          MySnackbar.show(context, message: 'Tüm alanları doldurunuz.');
                           return;
                         }
                         await login();

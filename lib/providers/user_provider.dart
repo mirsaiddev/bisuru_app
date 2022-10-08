@@ -1,4 +1,5 @@
 import 'package:bi_suru_app/models/owner_model.dart';
+import 'package:bi_suru_app/models/product_model.dart';
 import 'package:bi_suru_app/models/reference.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/services/database_service.dart';
@@ -39,12 +40,12 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addReference({required String userId, required String productName}) async {
+  Future<void> addReference({required String userId, required ProductModel productModel}) async {
     await updateOwnerModel();
 
     Reference reference = Reference(
       uid: userId,
-      productName: productName,
+      productModel: productModel,
       date: DateTime.now(),
     );
     ownerModel!.references.add(userId);

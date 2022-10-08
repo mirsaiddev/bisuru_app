@@ -12,6 +12,7 @@ import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/services/storage_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/enums/auth_status.dart';
+import 'package:bi_suru_app/utils/extensions.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
 import 'package:bi_suru_app/utils/text_input_formatters.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
@@ -183,6 +184,7 @@ class _EditOwnerProfileState extends State<EditOwnerProfile> {
                     children: [
                       SizedBox(height: 10),
                       MyTextfield(
+                        readOnly: true,
                         text: 'Ad soyad',
                         controller: nameController,
                         keyboardType: TextInputType.name,
@@ -199,10 +201,14 @@ class _EditOwnerProfileState extends State<EditOwnerProfile> {
                       SizedBox(height: 10),
                       MyTextfield(
                         text: 'E-posta',
+                        readOnly: true,
                         controller: emailController,
                         validator: (val) {
                           if (val!.isEmpty) {
                             return 'E-posta boş bırakılamaz';
+                          }
+                          if (!val.isValidEmail()) {
+                            return 'Geçerli bir e-posta giriniz';
                           }
                           return null;
                         },
@@ -268,12 +274,13 @@ class _EditOwnerProfileState extends State<EditOwnerProfile> {
                 ),
               ),
               SizedBox(height: 10),
-              MyButton(
-                text: 'Premium',
-                onPressed: () async {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => PremiumScreen()));
-                },
-              ),
+              if (!ownerModel.premium)
+                MyButton(
+                  text: 'Premium',
+                  onPressed: () async {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PremiumScreen()));
+                  },
+                ),
               SizedBox(height: 10),
               MyButton(
                 text: 'Çıkış Yap',

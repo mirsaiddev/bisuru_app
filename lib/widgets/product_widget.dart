@@ -1,7 +1,5 @@
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
-import 'package:bi_suru_app/theme/colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ProductWidget extends StatelessWidget {

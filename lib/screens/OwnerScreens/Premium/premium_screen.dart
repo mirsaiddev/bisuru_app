@@ -1,8 +1,10 @@
+import 'package:bi_suru_app/providers/system_provider.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/PaymentScreen/payment_screen.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PremiumScreen extends StatefulWidget {
   const PremiumScreen({Key? key}) : super(key: key);
@@ -14,6 +16,9 @@ class PremiumScreen extends StatefulWidget {
 class _PremiumScreenState extends State<PremiumScreen> {
   @override
   Widget build(BuildContext context) {
+    SystemProvider systemProvider = Provider.of<SystemProvider>(context);
+    double ownerPremium1MonthPrice = systemProvider.ownerPremium1MonthPrice;
+    double ownerPremium3MonthPrice = systemProvider.ownerPremium3MonthPrice;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -111,7 +116,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                             Image.asset('lib/assets/images/premium.png', height: 50),
                             SizedBox(height: 10),
                             Text(
-                              '1 Aylık\nPremium Paket\n29,99₺',
+                              '1 Aylık\nPremium Paket\n${ownerPremium1MonthPrice.toStringAsFixed(2)}₺',
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),
@@ -146,7 +151,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                             Image.asset('lib/assets/images/premium.png', height: 50),
                             SizedBox(height: 10),
                             Text(
-                              '3 Aylık\nPremium Paket\n79,99₺',
+                              '3 Aylık\nPremium Paket\n${ownerPremium3MonthPrice.toStringAsFixed(2)}₺',
                               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                               textAlign: TextAlign.center,
                             ),

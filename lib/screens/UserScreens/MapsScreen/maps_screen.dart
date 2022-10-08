@@ -43,7 +43,7 @@ class _MapsScreenState extends State<MapsScreen> {
         onTap: () {
           if (controller != null) {
             controller!.animateCamera(
-                CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(place.placeAddress!['lat'], place.placeAddress!['long']), zoom: 14)));
+                CameraUpdate.newCameraPosition(CameraPosition(target: LatLng(place.placeAddress!['lat'], place.placeAddress!['long']), zoom: 18)));
           }
           setState(() {
             selectedOwner = place;
@@ -154,7 +154,7 @@ class _MapsScreenState extends State<MapsScreen> {
                             Padding(
                               padding: const EdgeInsets.all(20.0),
                               child: SizedBox(
-                                height: 300,
+                                height: 320,
                                 child: PlaceWidgetMap(
                                     ownerModel: selectedOwner!,
                                     onClose: () {

@@ -68,4 +68,8 @@ class AuthService {
     await HiveService().delete('user-type');
     await firebaseAuth.signOut();
   }
+
+  Future<void> sendPasswordLink(String email) async {
+    await firebaseAuth.sendPasswordResetEmail(email: email);
+  }
 }

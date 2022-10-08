@@ -1,12 +1,18 @@
+import 'package:bi_suru_app/models/campaign.dart';
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
 import 'package:bi_suru_app/providers/system_provider.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/EditProduct/edit_product.dart';
+import 'package:bi_suru_app/screens/OwnerScreens/NewProduct/new_product.dart';
+import 'package:bi_suru_app/screens/OwnerScreens/OwnerCampaignDetail/owner_campaign_detail.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/OwnerProducts/owner_products.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/Premium/premium_screen.dart';
+import 'package:bi_suru_app/screens/UserScreens/CampaignDetail/campaign_detail.dart';
 import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
+import 'package:bi_suru_app/utils/my_snackbar.dart';
+import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/product_widget.dart';
@@ -94,14 +100,38 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                   aspectRatio: 2 / 1,
                   child: PageView.builder(
                     itemBuilder: (context, index) {
+                      Campaign campaign = systemProvider.campaigns[index % systemProvider.campaigns.length];
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: AspectRatio(
-                            aspectRatio: 2 / 1, child: Container(child: Image.network(systemProvider.sliders[index % systemProvider.sliders.length]))),
+                          aspectRatio: 2 / 1,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => OwnerCampaignDetail(campaign: campaign)));
+                            },
+                            child: Container(
+                              child: Image.network(campaign.campaignImage, fit: BoxFit.cover),
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),
                 ),
+                // SizedBox(height: 30),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Text('Son Kampanyalar', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black)),
+                //     TextButton(
+                //         onPressed: () {
+                //           Navigator.push(context, MaterialPageRoute(builder: (context) => OwnerProducts()));
+                //         },
+                //         child: Text('Tümünü Gör'))
+                //   ],
+                // ),
+                // SizedBox(height: 10),
+                // for (Campaign campaign in systemProvider.campaigns) MyListTile(child: Text(campaign.campaignName)),
                 SizedBox(height: 30),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -122,6 +152,32 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                       }
                       Map productsMap = snapshot.data!.snapshot.value != null ? snapshot.data!.snapshot.value as Map : {};
                       List<ProductModel> products = productsMap.entries.map((e) => ProductModel.fromMap(e.value)).toList();
+
+                      if (products.isEmpty) {
+                        return Center(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(height: 20),
+                              MyListTile(
+                                child: Center(child: Text('Henüz ürün eklememişsiniz.')),
+                              ),
+                              SizedBox(height: 20),
+                              MyButton(
+                                text: 'Ürün Oluştur',
+                                onPressed: () {
+                                  OwnerModel ownerModel = userProvider.ownerModel!;
+                                  if (!ownerModel.placeIsOpen()) {
+                                    MySnackbar.show(context, message: 'Mağazanız kapalı olduğu için ürün ekleyemezsiniz.');
+                                    return;
+                                  }
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => NewProduct()));
+                                },
+                              )
+                            ],
+                          ),
+                        );
+                      }
 
                       return GridView.builder(
                         physics: NeverScrollableScrollPhysics(),

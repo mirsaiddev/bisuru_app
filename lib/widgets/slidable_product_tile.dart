@@ -38,21 +38,22 @@ class SlidableProductTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             onPressed: (val) {
               showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                        title: Text('Dikkat'),
-                        content: Text('Ürünü silmek istediğinize emin misiniz?'),
-                        actions: [
-                          TextButton(onPressed: () => Navigator.pop(context), child: Text('Hayır')),
-                          TextButton(
-                            onPressed: () async {
-                              await DatabaseService().deleteProduct(ownerUid: ownerModel.uid!, productModel: productModel);
-                              Navigator.pop(context);
-                            },
-                            child: Text('Evet'),
-                          ),
-                        ],
-                      ));
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Dikkat'),
+                  content: Text('Ürünü silmek istediğinize emin misiniz?'),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context), child: Text('Hayır')),
+                    TextButton(
+                      onPressed: () async {
+                        await DatabaseService().deleteProduct(ownerUid: ownerModel.uid!, productModel: productModel);
+                        Navigator.pop(context);
+                      },
+                      child: Text('Evet'),
+                    ),
+                  ],
+                ),
+              );
             },
             backgroundColor: MyColors.red,
             foregroundColor: Colors.white,
@@ -71,23 +72,29 @@ class SlidableProductTile extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(ownerModel.placeName!, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
-                  SizedBox(height: 4),
-                  Text(productModel.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                  SizedBox(height: 4),
-                  Text(
-                    '${productModel.price}₺',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: MyColors.red,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(ownerModel.placeName!, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400)),
+                    Text(productModel.name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                    Text(
+                      productModel.description,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     ),
-                  ),
-                ],
+                    Text(
+                      '${productModel.price}₺',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: MyColors.red,
+                      ),
+                    ),
+                  ],
+                ),
               )
             ],
           ),

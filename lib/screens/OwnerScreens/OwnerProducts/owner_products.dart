@@ -5,6 +5,7 @@ import 'package:bi_suru_app/screens/OwnerScreens/NewProduct/new_product.dart';
 import 'package:bi_suru_app/screens/UserScreens/PlaceDetail/place_detail.dart';
 import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
+import 'package:bi_suru_app/utils/my_snackbar.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:bi_suru_app/widgets/slidable_product_tile.dart';
@@ -40,6 +41,11 @@ class _OwnerProductsState extends State<OwnerProducts> {
                 SizedBox(height: 10),
                 MyListTile(
                   onTap: () {
+                    OwnerModel ownerModel = userProvider.ownerModel!;
+                    if (!ownerModel.placeIsOpen()) {
+                      MySnackbar.show(context, message: 'Mağazanız kapalı olduğu için ürün ekleyemezsiniz.');
+                      return;
+                    }
                     Navigator.push(context, MaterialPageRoute(builder: (context) => NewProduct()));
                   },
                   child: Row(
@@ -49,6 +55,15 @@ class _OwnerProductsState extends State<OwnerProducts> {
                       SizedBox(width: 8),
                       Text('Ürün Ekle', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700))
                     ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                MyListTile(
+                  child: Center(
+                    child: Text(
+                      'Düzenlemek için sola kaydırın',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400, color: Colors.grey),
+                    ),
                   ),
                 ),
                 SizedBox(height: 10),

@@ -12,6 +12,11 @@ class ProductModel {
   final List comments;
   final String ownerUid;
   final bool enable;
+
+  double getDiscountPrice() {
+    return price - (price * comission / 100);
+  }
+
   ProductModel({
     required this.id,
     required this.name,

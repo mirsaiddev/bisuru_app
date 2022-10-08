@@ -11,6 +11,7 @@ import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/enums/auth_status.dart';
 import 'package:bi_suru_app/utils/extensions.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
+import 'package:bi_suru_app/widgets/forgot_password_dialog.dart';
 import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
@@ -28,7 +29,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailController = kDebugMode ? TextEditingController(text: 'mirsaid@gmail.com') : TextEditingController();
+  TextEditingController emailController = kDebugMode ? TextEditingController(text: 'dentistefy@gmail.com') : TextEditingController();
   TextEditingController passwordController = kDebugMode ? TextEditingController(text: '123456') : TextEditingController();
   final formKey = GlobalKey<FormState>();
 
@@ -40,11 +41,21 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    print(authResponse.isSuccessful);
+    print(authResponse.message);
+    print(authResponse.user);
+    print(authResponse.user!.uid);
     UserModel? userModel = await DatabaseService().getUserModel();
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
 
     if (userModel == null) {
       MySnackbar.show(context, message: 'Bir hata oluştu, lütfen tekrar deneyin');
+      return;
+    }
+
+    if (userModel.isDeleted) {
+      MySnackbar.show(context, message: 'Hesabınız silinmiştir');
+      AuthService().logout();
       return;
     }
 
@@ -122,6 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(height: 10),
                     MyTextfield(
                       text: 'Şifre',
+                      obscureText: true,
                       controller: passwordController,
                       validator: (text) {
                         if (text!.isEmpty) {
@@ -137,7 +149,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     Align(
                       alignment: Alignment.topRight,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => ForgotPasswordDialog(),
+                          );
+                        },
                         child: Text(
                           'Şifremi Unuttum',
                           style: TextStyle(color: MyColors.red),
@@ -149,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: 'Giriş Yap',
                       onPressed: () async {
                         if (!formKey.currentState!.validate()) {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tüm alanları doldurunuz.')));
+                          MySnackbar.show(context, message: 'Tüm alanları doldurunuz.');
                           return;
                         }
                         await login();

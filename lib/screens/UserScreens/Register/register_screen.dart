@@ -7,6 +7,7 @@ import 'package:bi_suru_app/screens/SelectCityDistrict/select_city_screen.dart';
 import 'package:bi_suru_app/screens/SelectCityDistrict/select_district_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/UserBottomNavBar/user_bottom_nav_bar.dart';
 import 'package:bi_suru_app/services/auth_service.dart';
+import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/services/hive_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/extensions.dart';
@@ -16,6 +17,7 @@ import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -46,6 +48,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
 
     UserModel userModel = await setUserModel();
+
+    bool phoneExists = await DatabaseService().checkPhoneExists(phoneController.text, isUser: true);
+    if (phoneExists) {
+      MySnackbar.show(context, message: "Bu telefon numarası ile daha önce kayıt yapılmış.");
+      return;
+    }
 
     AuthResponse authResponse = await AuthService().userRegister(
       userModel: userModel,
@@ -105,6 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   key: formKey,
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         MyTextfield(
@@ -136,20 +145,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                         SizedBox(height: 10),
-                        MyTextfield(
-                          text: 'Telefon',
-                          controller: phoneController,
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: [
-                            allowNumbers,
-                            denyCharacters,
-                          ],
-                          validator: (text) {
-                            if (text!.isEmpty) {
-                              return 'Telefon boş bırakılamaz';
+                        Text('Telefon'),
+                        SizedBox(height: 6),
+                        InternationalPhoneNumberInput(
+                          inputDecoration: InputDecoration(
+                            hintText: '5XX',
+                            isDense: true,
+                            prefixStyle: TextStyle(color: MyColors.red),
+                            contentPadding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                            fillColor: MyColors.lightGrey,
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.red),
+                            ),
+                          ),
+                          onInputChanged: (val) {},
+                          locale: 'TR',
+                          errorMessage: 'Hatalı telefon numarası',
+                          initialValue: PhoneNumber(isoCode: 'TR'),
+                          textFieldController: phoneController,
+                          validator: (val) {
+                            if (val!.isEmpty) {
+                              return 'Telefon numarası boş bırakılamaz';
                             }
-                            if (text.length < 9 || text.length > 11) {
-                              return 'Geçerli bir telefon giriniz';
+                            if (val.replaceAll(' ', '').length != 10) {
+                              return 'Telefon numarası 10 haneli olmalıdır';
                             }
                             return null;
                           },
@@ -207,6 +232,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         SizedBox(height: 10),
                         MyTextfield(
                           text: 'Şifre',
+                          obscureText: true,
                           controller: passwordController,
                           validator: (text) {
                             if (text!.isEmpty) {
@@ -220,6 +246,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         SizedBox(height: 10),
                         MyTextfield(
+                          obscureText: true,
                           text: 'Şifre Tekrar',
                           controller: passwordAgainController,
                           validator: (text) {
@@ -248,25 +275,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         SizedBox(height: 20),
                         MyButton(
-                            text: 'Kayıt Ol',
-                            onPressed: () async {
-                              if (!formKey.currentState!.validate()) {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tüm alanları doldurunuz.')));
-                                return;
-                              }
-                              if (!acceptTerms) {
-                                MySnackbar.show(context, message: 'Kullanım koşullarını kabul etmelisiniz');
-                                return;
-                              }
-                              await register();
-                            }),
+                          text: 'Kayıt Ol',
+                          onPressed: () async {
+                            if (!formKey.currentState!.validate()) {
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Tüm alanları doldurunuz.')));
+                              return;
+                            }
+                            if (!acceptTerms) {
+                              MySnackbar.show(context, message: 'Kullanım koşullarını kabul etmelisiniz');
+                              return;
+                            }
+                            await register();
+                          },
+                        ),
                         SizedBox(height: 20),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text('Hesabın var mı?'),
                             TextButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                               child: Text(
                                 'Giriş Yap',
                                 style: TextStyle(color: MyColors.red),
@@ -274,13 +304,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                           ],
                         ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => OwnerLoginScreen()));
-                          },
-                          child: Text(
-                            'Mekan Sahibi Girişi',
-                            style: TextStyle(color: MyColors.red),
+                        Center(
+                          child: TextButton(
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => OwnerLoginScreen()));
+                            },
+                            child: Text(
+                              'Mekan Sahibi Girişi',
+                              style: TextStyle(color: MyColors.red),
+                            ),
                           ),
                         ),
                         SizedBox(height: 30),

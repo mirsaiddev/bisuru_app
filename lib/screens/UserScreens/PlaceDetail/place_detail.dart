@@ -1,6 +1,7 @@
 import 'package:bi_suru_app/models/comment_model.dart';
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/product_model.dart';
+import 'package:bi_suru_app/models/reference.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/screens/UserScreens/AboutOwner/about_owner.dart';
@@ -14,18 +15,20 @@ import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
-import 'package:bi_suru_app/widgets/place_tile.dart';
+import 'package:bi_suru_app/widgets/product_tile.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class PlaceDetail extends StatefulWidget {
-  const PlaceDetail({Key? key, required this.ownerModel}) : super(key: key);
+  const PlaceDetail({Key? key, required this.ownerModel, this.useFree = false}) : super(key: key);
 
   final OwnerModel ownerModel;
+  final bool useFree;
 
   @override
   State<PlaceDetail> createState() => _PlaceDetailState();
@@ -86,9 +89,47 @@ class _PlaceDetailState extends State<PlaceDetail> {
                   return SingleChildScrollView(
                     child: Column(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Image.network(ownerModel.placePicture!, height: 190, width: double.infinity, fit: BoxFit.cover),
+                        if (!ownerModel.enable) ...[
+                          SizedBox(height: 10),
+                          MyListTile(
+                            padding: 14,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: double.infinity),
+                                Text(
+                                  'Uyarı!',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                                Text(
+                                  'Bu işletme şu anda kapalıdır.',
+                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.white),
+                                ),
+                              ],
+                            ),
+                            color: MyColors.red,
+                          ),
+                          SizedBox(height: 10),
+                        ],
+                        AspectRatio(
+                          aspectRatio: 2 / 1,
+                          child: PageView.builder(
+                            itemBuilder: (context, index) {
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: AspectRatio(
+                                  aspectRatio: 2 / 1,
+                                  child: Container(
+                                    child: Image.network(
+                                      ownerModel.getImages()[index % ownerModel.getImages().length],
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                         SizedBox(height: 10),
                         MyListTile(
@@ -102,6 +143,10 @@ class _PlaceDetailState extends State<PlaceDetail> {
                               Spacer(),
                               GestureDetector(
                                 onTap: () {
+                                  if (!ownerModel.references.any((element) => (element as Reference).uid == userModel.uid)) {
+                                    MySnackbar.show(context, message: 'Bu mekana yorum yapmak için önce ürün satın almalısınız');
+                                    return;
+                                  }
                                   double? rating;
                                   String? comment;
                                   showCupertinoModalBottomSheet(
@@ -192,7 +237,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
                                     children: [
                                       Icon(Icons.star, color: MyColors.yellow, size: 18),
                                       SizedBox(width: 6),
-                                      Text('derecelendir', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: MyColors.yellow)),
+                                      Text('Yorum yap', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: MyColors.yellow)),
                                     ],
                                   ),
                                 ),
@@ -223,6 +268,13 @@ class _PlaceDetailState extends State<PlaceDetail> {
                         ),
                         SizedBox(height: 10),
                         MyListTile(
+                          onTap: () async {
+                            String url = 'tel:${widget.ownerModel.contactInfo}';
+                            bool canLaunch = await canLaunchUrlString(url);
+                            if (canLaunch) {
+                              launchUrlString(url);
+                            }
+                          },
                           padding: 16,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -343,7 +395,7 @@ class _PlaceDetailState extends State<PlaceDetail> {
                           itemCount: ownerModel.products.length,
                           itemBuilder: (context, index) {
                             ProductModel productModel = ownerModel.products[index];
-                            return ProductTile(productModel: productModel, ownerModel: ownerModel);
+                            return ProductTile(productModel: productModel, ownerModel: ownerModel, useFree: widget.useFree);
                           },
                         ),
                       ],

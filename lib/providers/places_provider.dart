@@ -11,7 +11,8 @@ class PlacesProvider extends ChangeNotifier {
       return;
     }
     List<OwnerModel> _places = await DatabaseService().getAllOwnerModels(city);
-    places = _places.where((element) => element.placeIsOpen()).toList();
+    places = _places.toList();
+    // places = _places.where((element) => element.placeIsOpen()).toList();
     placesGet = true;
     notifyListeners();
   }

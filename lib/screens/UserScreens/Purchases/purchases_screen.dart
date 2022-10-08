@@ -81,7 +81,21 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(ownerModel.name, style: TextStyle(fontWeight: FontWeight.bold)),
-                                            Text(purchase.productName),
+                                            Text(purchase.productModel.name),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  '${purchase.productModel.price} ₺',
+                                                  style: TextStyle(
+                                                      fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black38, decoration: TextDecoration.lineThrough),
+                                                ),
+                                                SizedBox(width: 10),
+                                                Text(
+                                                  '${purchase.productModel.getDiscountPrice().toStringAsFixed(1)} ₺',
+                                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: MyColors.red),
+                                                ),
+                                              ],
+                                            )
                                           ],
                                         ),
                                       ),

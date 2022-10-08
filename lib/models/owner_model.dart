@@ -10,6 +10,7 @@ class OwnerModel {
   String district;
   String? uid, profilePicUrl;
   String? placeName, placeDescription, placeLongDescription, placePicture, contactInfo;
+  List placePictures;
   Map? placeAddress;
   String? placeCategory;
   String? placeRealAddress;
@@ -20,6 +21,14 @@ class OwnerModel {
   final bool isOwner;
   final String taxNumber;
   final String taxOffice;
+  bool smsVerified;
+  bool premium;
+
+  List getImages() {
+    List images = [placePicture];
+    images.addAll(placePictures);
+    return images;
+  }
 
   bool placeIsOpen() {
     return placeName != null &&
@@ -37,7 +46,8 @@ class OwnerModel {
     for (CommentModel comment in comments) {
       total += comment.rating;
     }
-    return total / comments.length;
+    double result = total / comments.length;
+    return result.isNaN ? 0 : result;
   }
 
   OwnerModel({
@@ -58,11 +68,14 @@ class OwnerModel {
     this.placePicture,
     this.placeCategory,
     this.placeRealAddress,
+    this.placePictures = const [],
     required this.enable,
     required this.products,
     required this.comments,
     this.references = const [],
     this.isOwner = true,
+    this.smsVerified = false,
+    this.premium = false,
   });
 
   factory OwnerModel.fromJson(Map json) {
@@ -83,12 +96,15 @@ class OwnerModel {
       placeCategory: json['placeCategory'],
       placeRealAddress: json['placeRealAddress'],
       enable: json['enable'] ?? false,
+      placePictures: json['placePictures'] != null ? (json['placePictures'].entries).map((e) => e.value).toList() : [],
       products: json['products'] != null ? (json['products'].entries).map((e) => ProductModel.fromMap(e.value)).toList() : [],
       references: json['references'] != null ? (json['references'].entries).map((e) => Reference.fromMap(e.value)).toList() : [],
       comments: json['comments'] != null ? (json['comments'].entries).map((e) => CommentModel.fromMap(e.value as Map)).toList() : [],
       isOwner: true,
       taxNumber: json['taxNumber'] ?? '',
       taxOffice: json['taxOffice'] ?? '',
+      smsVerified: json['smsVerified'] ?? false,
+      premium: json['premium'] ?? false,
     );
   }
 
@@ -116,6 +132,8 @@ class OwnerModel {
       'comments': comments.map((e) => e.toJson()).toList(),
       'taxNumber': taxNumber,
       'taxOffice': taxOffice,
+      'smsVerified': smsVerified,
+      'premium': premium,
     };
   }
 }

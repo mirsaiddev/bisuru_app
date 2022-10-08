@@ -224,17 +224,66 @@ class _OwnerPlaceState extends State<OwnerPlace> {
                     decoration: BoxDecoration(color: MyColors.lightGrey, borderRadius: BorderRadius.circular(10)),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: Image.network(ownerModel.placePicture!, fit: BoxFit.cover),
+                      child: ownerModel.placePicture != null
+                          ? Image.network(ownerModel.placePicture!, fit: BoxFit.cover)
+                          : Center(
+                              child: Icon(CupertinoIcons.camera_fill, color: MyColors.lightBlue),
+                            ),
                     ),
                   ),
                   for (int i = 0; i < 4; i++)
-                    Container(
-                      decoration: BoxDecoration(color: MyColors.lightGrey, borderRadius: BorderRadius.circular(10)),
-                      child: Center(
-                        child: Icon(
-                          CupertinoIcons.camera_fill,
-                          color: MyColors.lightBlue,
-                        ),
+                    GestureDetector(
+                      onLongPress: () {
+                        showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                                  title: Text('Dikkat'),
+                                  content: Text('Fotoğrafı silmek istediğinize emin misiniz?'),
+                                  actions: [
+                                    TextButton(onPressed: () => Navigator.pop(context), child: Text('Hayır')),
+                                    TextButton(
+                                        onPressed: () async {
+                                          Navigator.pop(context);
+                                          await DatabaseService().removePicture(ownerModel.uid!, ownerModel.placePictures[i]);
+                                          ownerModel.placePictures.removeAt(i);
+                                          setState(() {});
+                                        },
+                                        child: Text('Evet')),
+                                  ],
+                                ));
+                      },
+                      onTap: () async {
+                        XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
+                        if (image != null) {
+                          File imageFile = File(image.path);
+                          String imageURL = await StorageService().uploadFile(imageFile, bucketName: 'magazalar', folderName: ownerModel.name);
+                          await DatabaseService().addPicture(ownerModel.uid!, imageURL);
+                          if (ownerModel.placePicture == null) {
+                            ownerModel.placePicture = imageURL;
+                            placePicture = imageURL;
+                          } else {
+                            ownerModel.placePictures.add(imageURL);
+                          }
+                          setState(() {});
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(color: MyColors.lightGrey, borderRadius: BorderRadius.circular(10)),
+                        child: Builder(builder: (context) {
+                          if (ownerModel.placePictures.length > i) {
+                            return ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Image.network(ownerModel.placePictures[i]!, fit: BoxFit.cover),
+                            );
+                          } else {
+                            return Center(
+                              child: Icon(
+                                CupertinoIcons.camera_fill,
+                                color: MyColors.lightBlue,
+                              ),
+                            );
+                          }
+                        }),
                       ),
                     ),
                 ],
@@ -319,14 +368,14 @@ class _OwnerPlaceState extends State<OwnerPlace> {
                         controller: locationController,
                         readOnly: true,
                         hintText: 'Seçiniz',
+                        suffixIcon: Icon(Icons.edit),
                         onTap: () async {
-                          LatLng? _location = await Navigator.push(context, MaterialPageRoute(builder: (context) => const SelectLocation()));
+                          LatLng? _location = await Navigator.push(context, MaterialPageRoute(builder: (context) => SelectLocation(initialPosition: location)));
                           if (_location != null) {
                             List<Placemark> placemarks = await placemarkFromCoordinates(_location.latitude, _location.longitude);
                             Placemark placemark = placemarks.first;
-                            String city = placemark.locality!;
                             String street = placemark.street!;
-                            String address = '$city, $street';
+                            String address = '$street';
                             locationController.text = address;
                             location = _location;
                             setState(() {});

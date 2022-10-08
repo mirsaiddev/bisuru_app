@@ -30,7 +30,7 @@ class _NewProductState extends State<NewProduct> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController comissionController = TextEditingController();
-  String? productImage = 'https://cdn.yemek.com/mnresize/1250/833/uploads/2019/03/kremali-makarna-8.jpg';
+  String? productImage;
   var formKey = GlobalKey<FormState>();
   bool enable = true;
 
@@ -40,6 +40,8 @@ class _NewProductState extends State<NewProduct> {
       MySnackbar.show(context, message: 'Lütfen tüm alanları doldurunuz.');
       return;
     }
+    productImage = productImage ??
+        'https://firebasestorage.googleapis.com/v0/b/bisuru-8da3c.appspot.com/o/system%2Fapp_icon.png?alt=media&token=8c8568cf-3d68-4483-810d-c0d5a90d7467';
     UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
     OwnerModel ownerModel = userProvider.ownerModel!;
     ProductModel productModel = ProductModel(
@@ -73,7 +75,7 @@ class _NewProductState extends State<NewProduct> {
             children: [
               MyAppBar(
                 title: 'Yeni Ürün',
-                showBackButton: false,
+                showBackButton: true,
               ),
               SizedBox(height: 10),
               MyListTile(

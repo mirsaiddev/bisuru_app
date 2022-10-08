@@ -1,8 +1,14 @@
+import 'package:bi_suru_app/models/owner_model.dart';
+import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/services/database_service.dart';
+import 'package:bi_suru_app/services/payment_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
+import 'package:bi_suru_app/utils/my_snackbar.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
+import 'package:provider/provider.dart';
 
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({Key? key}) : super(key: key);
@@ -29,6 +35,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserProvider userProvider = Provider.of<UserProvider>(context);
+    OwnerModel ownerModel = userProvider.ownerModel!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -94,7 +102,40 @@ class _PaymentScreenState extends State<PaymentScreen> {
               SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 14.0),
-                child: MyButton(text: 'Ödeme Yap', onPressed: () {}),
+                child: MyButton(
+                    text: 'Ödeme Yap',
+                    onPressed: () async {
+                      //  Map response = await PaymentService().payment(
+                      //     paymentType: widget.paymentType,
+                      //     cardNameSurname: cardHolderName,
+                      //     cardNo: cardNumber,
+                      //     cardMonth: expiryDate.split('/').first,
+                      //     cardYear: expiryDate.split('/').last,
+                      //     cardCvc: cvvCode,
+                      //     name: cardHolderName.split(' ').first,
+                      //     surname: cardHolderName.split(' ').last,
+                      //     phone: userModel.phone,
+                      //     mail: 'deneme@gmail.com',
+                      //     faturaNameSurname: userModel.fullName,
+                      //     faturaCity: userModel.city,
+                      //     faturaCountry: 'Türkiye',
+                      //     faturaAddress: 'Türkiye / ${userModel.city}',
+                      //     faturaPostalCode: '06320',
+                      //   );
+                      //   if (response['success']) {
+                      //     Navigator.pop(context);
+                      //     MySnackbar.show(context, message: 'Başarılı bir şekilde ödeme yapıldı');
+                      //   } else {
+                      //     MySnackbar.show(context, message: 'Ödeme sırasında bir hata oluştu : ${response['message']}');
+                      //   }
+
+                      await DatabaseService().buyPremium(isUser: false, uid: ownerModel.uid!);
+                      ownerModel.premium = true;
+                      userProvider.ownerModel = ownerModel;
+                      userProvider.notify();
+                      Navigator.pop(context);
+                      MySnackbar.show(context, message: 'Başarılı bir şekilde ödeme yapıldı');
+                    }),
               ),
             ],
           ),

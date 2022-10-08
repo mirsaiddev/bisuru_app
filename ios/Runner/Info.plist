@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Bi Suru App</string>
+	<string>Bi Sürü</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -59,6 +59,11 @@
 	<array>
 	    <string>googlechromes</string>
 	    <string>comgooglemaps</string>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	  <string>sms</string>
+	  <string>tel</string>
 	</array>
 </dict>
 </plist>

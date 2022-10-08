@@ -28,35 +28,35 @@ class _SavedPlacesState extends State<SavedPlaces> {
             children: [
               MyAppBar(title: 'Kaydedilenler', showBackButton: false),
               SizedBox(height: 10),
-              StreamBuilder<DatabaseEvent>(
-                  stream: DatabaseService().savedPlacesStream(userModel.uid!),
-                  builder: (context, snapshot) {
-                    if (snapshot.data == null) {
-                      return SizedBox();
-                    }
-                    if (snapshot.data!.snapshot.value == null) {
-                      return Expanded(child: Center(child: Text('Kaydedilen yer bulunamadı')));
-                    }
-                    Map data = snapshot.data!.snapshot.value as Map;
+              Expanded(
+                child: StreamBuilder<DatabaseEvent>(
+                    stream: DatabaseService().savedPlacesStream(userModel.uid!),
+                    builder: (context, snapshot) {
+                      if (snapshot.data == null) {
+                        return SizedBox();
+                      }
+                      if (snapshot.data!.snapshot.value == null) {
+                        return Expanded(child: Center(child: Text('Kaydedilen yer bulunamadı')));
+                      }
+                      Map data = snapshot.data!.snapshot.value as Map;
 
-                    return GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
-                      itemCount: data.length,
-                      itemBuilder: (context, index) {
-                        return FutureBuilder<OwnerModel>(
-                          future: DatabaseService().getOwnerModelById(data.entries.toList()[index].value),
-                          builder: (context, snapshot) {
-                            if (snapshot.data == null) {
-                              return Container();
-                            }
-                            return PlaceWidget(ownerModel: snapshot.data!);
-                          },
-                        );
-                      },
-                    );
-                  })
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10),
+                        itemCount: data.length,
+                        itemBuilder: (context, index) {
+                          return FutureBuilder<OwnerModel>(
+                            future: DatabaseService().getOwnerModelById(data.entries.toList()[index].value),
+                            builder: (context, snapshot) {
+                              if (snapshot.data == null) {
+                                return Container();
+                              }
+                              return PlaceWidget(ownerModel: snapshot.data!);
+                            },
+                          );
+                        },
+                      );
+                    }),
+              )
             ],
           ),
         ),

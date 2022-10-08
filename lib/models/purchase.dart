@@ -1,42 +1,44 @@
 import 'dart:convert';
 
+import 'package:bi_suru_app/models/product_model.dart';
+
 class Purchase {
   final String ownerUid;
   final DateTime date;
-  final String productName;
+  final ProductModel productModel;
   Purchase({
     required this.ownerUid,
     required this.date,
-    required this.productName,
+    required this.productModel,
   });
 
   Purchase copyWith({
-    String? name,
+    String? ownerUid,
     DateTime? date,
-    String? productName,
+    ProductModel? productModel,
   }) {
     return Purchase(
-      ownerUid: name ?? this.ownerUid,
+      ownerUid: ownerUid ?? this.ownerUid,
       date: date ?? this.date,
-      productName: productName ?? this.productName,
+      productModel: productModel ?? this.productModel,
     );
   }
 
   Map<String, dynamic> toMap() {
     final result = <String, dynamic>{};
 
-    result.addAll({'name': ownerUid});
+    result.addAll({'ownerUid': ownerUid});
     result.addAll({'date': date.millisecondsSinceEpoch});
-    result.addAll({'productName': productName});
+    result.addAll({'productModel': productModel.toMap()});
 
     return result;
   }
 
   factory Purchase.fromMap(Map<dynamic, dynamic> map) {
     return Purchase(
-      ownerUid: map['name'] ?? '',
+      ownerUid: map['ownerUid'] ?? '',
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
-      productName: map['productName'] ?? '',
+      productModel: ProductModel.fromMap(map['productModel']),
     );
   }
 
@@ -45,15 +47,15 @@ class Purchase {
   factory Purchase.fromJson(String source) => Purchase.fromMap(json.decode(source));
 
   @override
-  String toString() => 'Purchase(name: $ownerUid, date: $date, productName: $productName)';
+  String toString() => 'Purchase(ownerUid: $ownerUid, date: $date, productModel: $productModel)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Purchase && other.ownerUid == ownerUid && other.date == date && other.productName == productName;
+    return other is Purchase && other.ownerUid == ownerUid && other.date == date && other.productModel == productModel;
   }
 
   @override
-  int get hashCode => ownerUid.hashCode ^ date.hashCode ^ productName.hashCode;
+  int get hashCode => ownerUid.hashCode ^ date.hashCode ^ productModel.hashCode;
 }

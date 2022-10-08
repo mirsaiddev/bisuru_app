@@ -24,6 +24,7 @@ class QrCodeScreen extends StatefulWidget {
 class _QrCodeScreenState extends State<QrCodeScreen> {
   String time = '';
   String? qrData;
+  Timer? timer;
 
   @override
   void initState() {
@@ -33,11 +34,11 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
 
   void startTimer() {
     getQrData();
-    Timer.periodic(Duration(seconds: 1), (timer) {
-      if (timer.tick % 30 == 0) {
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (timer.tick % 15 == 0) {
         getQrData();
       }
-      time = (30 - (timer.tick % 30)).toString();
+      time = (15 - (timer.tick % 15)).toString();
       setState(() {});
     });
   }
@@ -57,8 +58,16 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
     };
 
     _qrData = jsonEncode(data);
-    qrData = base64Encode(utf8.encode(_qrData));
+    qrData = (_qrData);
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    if (timer != null) {
+      timer!.cancel();
+    }
+    super.dispose();
   }
 
   @override
@@ -124,7 +133,12 @@ class _QrCodeScreenState extends State<QrCodeScreen> {
                                   SizedBox(width: 10),
                                   Text(
                                     '${widget.productModel.price} ₺',
-                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black38, decoration: TextDecoration.lineThrough),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    '${widget.productModel.getDiscountPrice().toStringAsFixed(1)} ₺',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: MyColors.red),
                                   ),
                                 ],
                               ),

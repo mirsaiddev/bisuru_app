@@ -71,13 +71,17 @@ class _QrCodeReaderState extends State<QrCodeReader> {
     OwnerModel ownerModel = userProvider.ownerModel!;
 
     this.controller = _controller;
-    controller!.pauseCamera();
-    controller!.resumeCamera();
+    if (Platform.isAndroid) {
+      controller!.pauseCamera();
+      controller!.resumeCamera();
+    }
+
     controller!.scannedDataStream.listen((scanData) async {
       if (scanData.format == BarcodeFormat.qrcode) {
         if (scanData.code != null) {
           try {
             Map data = jsonDecode(scanData.code!);
+            print('data: $data');
             String uid = data['uid'];
             String ownerUid = data['ownerUid'];
             int productId = data['productId'];
@@ -96,8 +100,8 @@ class _QrCodeReaderState extends State<QrCodeReader> {
                 if (!qrCodeReaded) {
                   qrCodeReaded = true;
                   ProductModel productModel = ownerModel.products.firstWhere((element) => element.id == productId);
-                  Purchase purchase = Purchase(ownerUid: ownerUid, date: DateTime.now(), productName: productModel.name);
-                  await userProvider.addReference(userId: uid, productName: productModel.name);
+                  Purchase purchase = Purchase(ownerUid: ownerUid, date: DateTime.now(), productModel: productModel);
+                  await userProvider.addReference(userId: uid, productModel: productModel);
                   await DatabaseService().addPurchase(userId: uid, purchase: purchase);
                   BottomNavBarProvider bottomNavBarProvider = Provider.of<BottomNavBarProvider>(context, listen: false);
                   bottomNavBarProvider.ownerSetCurrentIndex(1);

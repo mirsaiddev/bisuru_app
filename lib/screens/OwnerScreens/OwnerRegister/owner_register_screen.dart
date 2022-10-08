@@ -10,6 +10,7 @@ import 'package:bi_suru_app/screens/SelectCityDistrict/select_district_screen.da
 import 'package:bi_suru_app/screens/UserScreens/Home/user_home_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/Login/login_screen.dart';
 import 'package:bi_suru_app/services/auth_service.dart';
+import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/services/hive_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/extensions.dart';
@@ -19,6 +20,7 @@ import 'package:bi_suru_app/widgets/my_button.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 
 class OwnerRegisterScreen extends StatefulWidget {
@@ -50,6 +52,12 @@ class _OwnerRegisterScreenState extends State<OwnerRegisterScreen> {
     }
 
     OwnerModel ownerModel = await setOwnerModel();
+
+    bool phoneExists = await DatabaseService().checkPhoneExists(phoneController.text, isUser: false);
+    if (phoneExists) {
+      MySnackbar.show(context, message: "Bu telefon numarası ile daha önce kayıt yapılmış.");
+      return;
+    }
 
     AuthResponse authResponse = await AuthService().ownerRegister(
       ownerModel: ownerModel,
@@ -158,20 +166,36 @@ class _OwnerRegisterScreenState extends State<OwnerRegisterScreen> {
                           },
                         ),
                         SizedBox(height: 10),
-                        MyTextfield(
-                          text: 'Telefon',
-                          controller: phoneController,
-                          keyboardType: TextInputType.phone,
-                          inputFormatters: [
-                            allowNumbers,
-                            denyCharacters,
-                          ],
-                          validator: (text) {
-                            if (text!.isEmpty) {
-                              return 'Telefon boş bırakılamaz';
+                        Text('Telefon'),
+                        SizedBox(height: 6),
+                        InternationalPhoneNumberInput(
+                          inputDecoration: InputDecoration(
+                            hintText: '5XX',
+                            isDense: true,
+                            prefixStyle: TextStyle(color: MyColors.red),
+                            contentPadding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+                            fillColor: MyColors.lightGrey,
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            errorBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(color: Colors.red),
+                            ),
+                          ),
+                          onInputChanged: (val) {},
+                          locale: 'TR',
+                          errorMessage: 'Hatalı telefon numarası',
+                          initialValue: PhoneNumber(isoCode: 'TR'),
+                          textFieldController: phoneController,
+                          validator: (val) {
+                            if (val!.isEmpty) {
+                              return 'Telefon numarası boş bırakılamaz';
                             }
-                            if (text.length < 9 || text.length > 11) {
-                              return 'Geçerli bir telefon giriniz';
+                            if (val.replaceAll(' ', '').length != 10) {
+                              return 'Telefon numarası 10 haneli olmalıdır';
                             }
                             return null;
                           },
@@ -186,6 +210,11 @@ class _OwnerRegisterScreenState extends State<OwnerRegisterScreen> {
                             if (text!.isEmpty) {
                               return 'Vergi no boş bırakılamaz';
                             }
+                            if (text.length != 11) {
+                              return 'Vergi no 11 haneli olmalıdır';
+                            }
+
+                            print('text.length : ${text.length}');
 
                             return null;
                           },
@@ -255,6 +284,7 @@ class _OwnerRegisterScreenState extends State<OwnerRegisterScreen> {
                         SizedBox(height: 10),
                         MyTextfield(
                           text: 'Şifre',
+                          obscureText: true,
                           controller: passwordController,
                           validator: (text) {
                             if (text!.isEmpty) {
@@ -269,6 +299,7 @@ class _OwnerRegisterScreenState extends State<OwnerRegisterScreen> {
                         SizedBox(height: 10),
                         MyTextfield(
                           text: 'Şifre Tekrar',
+                          obscureText: true,
                           controller: passwordAgainController,
                           validator: (text) {
                             if (text!.isEmpty) {

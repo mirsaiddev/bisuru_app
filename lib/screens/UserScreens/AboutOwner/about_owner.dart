@@ -4,6 +4,7 @@ import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:maps_launcher/maps_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class AboutOwner extends StatefulWidget {
   const AboutOwner({Key? key, required this.ownerModel}) : super(key: key);
@@ -120,7 +121,13 @@ class _AboutOwnerState extends State<AboutOwner> {
             ),
             SizedBox(height: 10),
             MyListTile(
-              onTap: () {},
+              onTap: () async {
+                String url = 'tel:${widget.ownerModel.contactInfo}';
+                bool canLaunch = await canLaunchUrlString(url);
+                if (canLaunch) {
+                  launchUrlString(url);
+                }
+              },
               padding: 16,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

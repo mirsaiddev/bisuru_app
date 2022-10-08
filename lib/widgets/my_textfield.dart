@@ -20,6 +20,7 @@ class MyTextfield extends StatelessWidget {
     this.suffixIcon,
     this.inputFormatters,
     this.keyboardType,
+    this.obscureText = false,
   }) : super(key: key);
 
   final String? text;
@@ -37,6 +38,7 @@ class MyTextfield extends StatelessWidget {
   final Widget? suffixIcon;
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
+  final bool obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +51,7 @@ class MyTextfield extends StatelessWidget {
         ],
         SizedBox(
           child: TextFormField(
+            obscureText: obscureText,
             inputFormatters: inputFormatters,
             keyboardType: keyboardType,
             onChanged: onChanged,

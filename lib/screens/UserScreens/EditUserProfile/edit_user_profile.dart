@@ -11,6 +11,7 @@ import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/services/storage_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/enums/auth_status.dart';
+import 'package:bi_suru_app/utils/extensions.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
 import 'package:bi_suru_app/utils/text_input_formatters.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
@@ -203,6 +204,9 @@ class _EditUserProfileState extends State<EditUserProfile> {
                           if (val!.isEmpty) {
                             return 'E-posta boş bırakılamaz';
                           }
+                          if (!val.isValidEmail()) {
+                            return 'Geçerli bir e-posta giriniz';
+                          }
                           return null;
                         },
                       ),
@@ -268,8 +272,9 @@ class _EditUserProfileState extends State<EditUserProfile> {
               ),
               SizedBox(height: 10),
               MyButton(
-                text: 'Çıkış Yap',
+                text: 'Hesabımı Sil',
                 onPressed: () async {
+                  await DatabaseService().updateIsDeleted(isUser: true, uid: userModel.uid!);
                   UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
                   await AuthService().logout();
                   userProvider.setAuthStatus(AuthStatus.notLoggedIn);

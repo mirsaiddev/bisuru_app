@@ -50,11 +50,18 @@ class _PlaceWidgetMapState extends State<PlaceWidgetMap> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                IconButton(
-                    onPressed: () async {
-                      MapsLauncher.launchCoordinates(widget.ownerModel.placeAddress!['lat'], widget.ownerModel.placeAddress!['long']);
-                    },
-                    icon: Image.asset('lib/assets/images/open_map.png', width: 26)),
+                GestureDetector(
+                  onTap: () {
+                    MapsLauncher.launchCoordinates(widget.ownerModel.placeAddress!['lat'], widget.ownerModel.placeAddress!['long']);
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset('lib/assets/images/google-maps.png', width: 26),
+                      Text('Yol Tarifi', style: TextStyle(fontSize: 10, color: Colors.black)),
+                    ],
+                  ),
+                ),
                 Text(
                   widget.ownerModel.placeName!,
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
@@ -66,6 +73,7 @@ class _PlaceWidgetMapState extends State<PlaceWidgetMap> {
                     icon: Icon(Icons.close)),
               ],
             ),
+            SizedBox(height: 6),
             Expanded(
               flex: 3,
               child: ClipRRect(

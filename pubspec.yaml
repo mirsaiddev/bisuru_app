@@ -10,7 +10,9 @@ environment:
 
 dependencies:
   another_flushbar: ^1.12.29
+  connectivity_plus: ^2.3.7
   cupertino_icons: ^1.0.2
+  dio: ^4.0.6
   firebase_auth: ^3.8.0
   firebase_core: ^1.22.0
   firebase_database: ^9.1.4
@@ -27,15 +29,18 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   image_picker: ^0.8.5+3
+  intl_phone_number_input: ^0.7.1
   location: ^4.4.0
   maps_launcher: ^2.0.1
   modal_bottom_sheet: ^2.1.2
+  new_version: ^0.3.1
   permission_handler: ^10.0.0
+  pinput: ^2.2.12
   provider: ^6.0.3
   qr_code_scanner: ^1.0.1
   qr_flutter: ^4.0.0
   random_string: ^2.3.1
-  url_launcher: ^6.1.5
+  url_launcher: ^6.1.6
 
 dev_dependencies:
   flutter_lints: ^2.0.0
@@ -54,6 +59,7 @@ flutter:
     - lib/assets/images/
     - lib/assets/txt/
     - lib/assets/json/
+    - lib/assets/icons/
 
   fonts:
     - family: ReadexPro

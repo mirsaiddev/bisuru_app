@@ -1,3 +1,4 @@
+import 'package:bi_suru_app/utils/icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 extension EmailValidator on String {
@@ -5,6 +6,10 @@ extension EmailValidator on String {
     return RegExp(
             r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
         .hasMatch(this);
+  }
+
+  String getIcon() {
+    return categoryIcons[this] ?? 'lib/assets/icons/Lokanta.png';
   }
 }
 

@@ -39,7 +39,7 @@ class _PlacesScreenState extends State<PlacesScreen> {
                 StreamBuilder<DatabaseEvent>(
                   stream: DatabaseService().allPlacesStream(userModel.city),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
+                    if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
                       return SizedBox();
                     }
                     List<OwnerModel> places = (snapshot.data!.snapshot.value as Map)
@@ -47,6 +47,13 @@ class _PlacesScreenState extends State<PlacesScreen> {
                         .map((e) => OwnerModel.fromJson(e.value))
                         .where((element) => element.placeIsOpen())
                         .toList();
+                    places.sort((a, b) => b.references.length.compareTo(a.references.length));
+
+                    List<OwnerModel> premiumUsers = places.where((element) => element.premium).toList();
+                    premiumUsers.sort((a, b) => b.references.length.compareTo(a.references.length));
+                    List<OwnerModel> normalUsers = places.where((element) => !element.premium).toList();
+                    normalUsers.sort((a, b) => b.references.length.compareTo(a.references.length));
+                    places = premiumUsers + normalUsers;
                     return GridView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,

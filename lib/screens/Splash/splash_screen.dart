@@ -2,6 +2,7 @@ import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/system_provider.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/screens/NoInternet/no_internet.dart';
 import 'package:bi_suru_app/screens/Onboarding/onboarding_screen.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/OwnerBottomNavBar/owner_bottom_nav_bar.dart';
 import 'package:bi_suru_app/screens/UserScreens/Login/login_screen.dart';
@@ -12,6 +13,7 @@ import 'package:bi_suru_app/services/hive_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/enums/auth_status.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,7 +34,12 @@ class _SplashScreenState extends State<SplashScreen> {
   bool? loggedIn;
   bool? onboardingShown;
 
-  void navigate() {
+  Future<void> navigate() async {
+    ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const NoInternet()));
+      return;
+    }
     system();
     Future.delayed(const Duration(seconds: 1), () async {
       check();
@@ -43,6 +50,9 @@ class _SplashScreenState extends State<SplashScreen> {
     SystemProvider systemProvider = Provider.of<SystemProvider>(context, listen: false);
     systemProvider.getSliders();
     systemProvider.getCategories();
+    systemProvider.getCampaigns();
+    systemProvider.getFreePurchaseCount();
+    systemProvider.getPrices();
   }
 
   Future<void> check() async {
@@ -69,12 +79,20 @@ class _SplashScreenState extends State<SplashScreen> {
         if (userModel != null) {
           userProvider.setUserModel(userModel);
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => UserBottomNavBar()), (route) => false);
+        } else {
+          userProvider.setAuthStatus(AuthStatus.notLoggedIn);
+          await AuthService().logout();
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);
         }
       } else if (userType == 'owner') {
         OwnerModel? ownerModel = await DatabaseService().getOwnerModel();
         if (ownerModel != null) {
           userProvider.setOwnerModel(ownerModel);
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => OwnerBottomNavBar()), (route) => false);
+        } else {
+          userProvider.setAuthStatus(AuthStatus.notLoggedIn);
+          await AuthService().logout();
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => LoginScreen()), (route) => false);
         }
       }
     }

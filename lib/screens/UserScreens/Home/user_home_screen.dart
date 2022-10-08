@@ -1,3 +1,4 @@
+import 'package:bi_suru_app/models/campaign.dart';
 import 'package:bi_suru_app/models/owner_model.dart';
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/providers/bottom_nav_bar_provider.dart';
@@ -5,9 +6,11 @@ import 'package:bi_suru_app/providers/places_provider.dart';
 import 'package:bi_suru_app/providers/system_provider.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/CategoryPlaces/category_places.dart';
+import 'package:bi_suru_app/screens/UserScreens/CampaignDetail/campaign_detail.dart';
 import 'package:bi_suru_app/screens/UserScreens/Places/places_screen.dart';
 import 'package:bi_suru_app/screens/UserScreens/Search/search_screen.dart';
 import 'package:bi_suru_app/services/database_service.dart';
+import 'package:bi_suru_app/utils/extensions.dart';
 import 'package:bi_suru_app/widgets/my_logo_widget.dart';
 import 'package:bi_suru_app/widgets/my_textfield.dart';
 import 'package:bi_suru_app/widgets/place_widget.dart';
@@ -29,7 +32,6 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     PlacesProvider placesProvider = Provider.of<PlacesProvider>(context);
     UserProvider userProvider = Provider.of<UserProvider>(context);
     UserModel userModel = userProvider.userModel!;
-    List<String> categories = systemProvider.categories;
 
     return Scaffold(
       body: SafeArea(
@@ -91,10 +93,20 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   aspectRatio: 2 / 1,
                   child: PageView.builder(
                     itemBuilder: (context, index) {
+                      Campaign campaign = systemProvider.campaigns[index % systemProvider.campaigns.length];
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: AspectRatio(
-                            aspectRatio: 2 / 1, child: Container(child: Image.network(systemProvider.sliders[index % systemProvider.sliders.length]))),
+                          aspectRatio: 2 / 1,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => CampaignDetail(campaign: campaign)));
+                            },
+                            child: Container(
+                              child: Image.network(campaign.campaignImage, fit: BoxFit.cover),
+                            ),
+                          ),
+                        ),
                       );
                     },
                   ),
@@ -113,59 +125,75 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                   ],
                 ),
                 SizedBox(height: 14),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (String category in categories)
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryPlaces(category: category)));
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
-                            padding: EdgeInsets.all(10),
-                            margin: EdgeInsets.only(right: 10),
-                            width: 80,
-                            height: 100,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    category,
-                                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                    overflow: TextOverflow.ellipsis,
+                StreamBuilder<DatabaseEvent>(
+                    stream: DatabaseService().categoriesStream(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) {
+                        return SizedBox();
+                      }
+                      List categories = (snapshot.data!.snapshot.value as List).where((element) => element != null).toList();
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (String category in categories)
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => CategoryPlaces(category: category)));
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white),
+                                  padding: EdgeInsets.all(10),
+                                  margin: EdgeInsets.only(right: 10),
+                                  width: 100,
+                                  height: 100,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                        child: Image.asset(
+                                          category.getIcon(),
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Flexible(
+                                        child: Text(
+                                          category,
+                                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        placesProvider.getPlaceCountForCategory(category).toString(),
+                                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(height: 6),
-                                Text(
-                                  placesProvider.getPlaceCountForCategory(category).toString(),
-                                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-                                ),
-                              ],
-                            ),
-                          ),
+                              ),
+                          ],
                         ),
-                    ],
-                  ),
-                ),
+                      );
+                    }),
                 SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Sana Özel Hizmetler', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.black)),
                     TextButton(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => PlacesScreen()));
-                        },
-                        child: Text('Tümünü Gör'))
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => PlacesScreen()));
+                      },
+                      child: Text('Tümünü Gör'),
+                    ),
                   ],
                 ),
                 StreamBuilder<DatabaseEvent>(
                   stream: DatabaseService().allPlacesStream(userModel.city),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
+                    if (!snapshot.hasData || snapshot.data!.snapshot.value == null) {
                       return SizedBox();
                     }
                     List<OwnerModel> places = (snapshot.data!.snapshot.value as Map)
@@ -173,7 +201,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                         .map((e) => OwnerModel.fromJson(e.value))
                         .where((element) => element.placeIsOpen())
                         .toList();
+                    places.sort((a, b) => b.references.length.compareTo(a.references.length));
+
                     placesProvider.places = places;
+                    List<OwnerModel> premiumUsers = places.where((element) => element.premium).toList();
+                    premiumUsers.sort((a, b) => b.references.length.compareTo(a.references.length));
+                    List<OwnerModel> normalUsers = places.where((element) => !element.premium).toList();
+                    normalUsers.sort((a, b) => b.references.length.compareTo(a.references.length));
+                    places = premiumUsers + normalUsers;
                     return GridView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
