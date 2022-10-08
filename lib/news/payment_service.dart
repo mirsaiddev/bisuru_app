@@ -42,9 +42,10 @@ class PaymentService {
       'cardYear': cardYear,
       'cardCvc': cardCvc,
       'ad': cardNameSurname,
-      'soyad': cardNameSurname,
+      'soyad':cardNameSurname,
       'telefon': phone,
       'mail': mail,
+
       'fatura_ad_soyad': faturaNameSurname,
       'fatura_sehir': faturaCity,
       'fatura_ulke': faturaCountry,
@@ -67,7 +68,7 @@ class PaymentService {
     print('kardname:{$cardNameSurname} /n ,kardno:{$cardNo} /n kardmontg:{$cardMonth} /n kartYear: {$cardYear} telefon:{$phone}'
         'mail: {$mail}'
         'ad:{$name}'
-        'soyad {$surname}');
+        'soyad {$surname}' );
 
     if (response.statusCode == 200) {
       if (jsonDecode(response.data)['status'] == 'error') {
@@ -78,6 +79,7 @@ class PaymentService {
       return {
         'success': false,
         'message': response.data,
+
       };
     }
   }

@@ -1,6 +1,7 @@
 import 'package:bi_suru_app/models/user_model.dart';
+import 'package:bi_suru_app/news/payment_real_services.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
-import 'package:bi_suru_app/services/payment_service.dart';
+import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/enums/payment_enums.dart';
 import 'package:bi_suru_app/utils/my_snackbar.dart';
@@ -20,10 +21,10 @@ class UserPaymentScreen extends StatefulWidget {
 }
 
 class _UserPaymentScreenState extends State<UserPaymentScreen> {
-  String cardNumber = '5487931098297168';
-  String expiryDate = '04/29';
-  String cardHolderName = 'NURETTİN ERASLAN';
-  String cvvCode = '884';
+  String cardNumber = '5400617007286848';
+  String expiryDate = '04/2026';
+  String cardHolderName = 'Muhammed Yasir Canpolat';
+  String cvvCode = '651';
   bool isCvvFocused = false;
   bool useGlassMorphism = true;
   bool useBackgroundImage = true;
@@ -107,7 +108,9 @@ class _UserPaymentScreenState extends State<UserPaymentScreen> {
                 child: MyButton(
                     text: 'Ödeme Yap',
                     onPressed: () async {
-                      Map response = await PaymentService().payment(
+                      String phone = '+90' + userModel.phone.replaceAll(' ', '');
+                      print('phone number: ${phone}');
+                      Map response = await PaymentServiceTwo().payment(
                         paymentType: widget.paymentType,
                         cardNameSurname: cardHolderName,
                         cardNo: cardNumber,
@@ -116,7 +119,7 @@ class _UserPaymentScreenState extends State<UserPaymentScreen> {
                         cardCvc: cvvCode,
                         name: cardHolderName.split(' ').first,
                         surname: cardHolderName.split(' ').last,
-                        phone: userModel.phone,
+                        phone: phone,
                         mail: 'deneme@gmail.com',
                         faturaNameSurname: userModel.fullName,
                         faturaCity: userModel.city,
@@ -124,11 +127,13 @@ class _UserPaymentScreenState extends State<UserPaymentScreen> {
                         faturaAddress: 'Türkiye / ${userModel.city}',
                         faturaPostalCode: '06320',
                       );
-                      if (response['success']) {
+                      if (response['status'] == 'success') {
+                        userModel.premium = true;
+                        await DatabaseService().buyPremium(isUser: true, uid: userModel.uid!);
                         Navigator.pop(context);
                         MySnackbar.show(context, message: 'Başarılı bir şekilde ödeme yapıldı');
                       } else {
-                        MySnackbar.show(context, message: 'Ödeme sırasında bir hata oluştu : ${response['message']}');
+                        MySnackbar.show(context, message: 'Ödeme sırasında bir hata oluştu : ${response['response']}');
                       }
                     }),
               ),
