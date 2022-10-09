@@ -1,6 +1,7 @@
 import 'package:bi_suru_app/providers/system_provider.dart';
 import 'package:bi_suru_app/screens/OwnerScreens/PaymentScreen/payment_screen.dart';
 import 'package:bi_suru_app/theme/colors.dart';
+import 'package:bi_suru_app/utils/enums/payment_enums.dart';
 import 'package:bi_suru_app/widgets/my_app_bar.dart';
 import 'package:bi_suru_app/widgets/my_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -124,7 +125,7 @@ class _PremiumScreenState extends State<PremiumScreen> {
                             Center(
                               child: GestureDetector(
                                 onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen()));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen(paymentType: PaymentType.owner1Month)));
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -145,6 +146,9 @@ class _PremiumScreenState extends State<PremiumScreen> {
                     SizedBox(width: 10),
                     Expanded(
                       child: MyListTile(
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen(paymentType: PaymentType.owner3Months)));
+                        },
                         child: Column(
                           children: [
                             SizedBox(height: 20),

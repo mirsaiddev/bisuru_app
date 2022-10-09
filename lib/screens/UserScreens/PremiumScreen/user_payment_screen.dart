@@ -1,6 +1,7 @@
 import 'package:bi_suru_app/models/user_model.dart';
 import 'package:bi_suru_app/news/payment_real_services.dart';
 import 'package:bi_suru_app/providers/user_provider.dart';
+import 'package:bi_suru_app/screens/UserScreens/SuccessScreen/success_screen.dart';
 import 'package:bi_suru_app/services/database_service.dart';
 import 'package:bi_suru_app/theme/colors.dart';
 import 'package:bi_suru_app/utils/enums/payment_enums.dart';
@@ -132,6 +133,7 @@ class _UserPaymentScreenState extends State<UserPaymentScreen> {
                         userProvider.notify();
                         await DatabaseService().buyPremium(isUser: true, uid: userModel.uid!);
                         Navigator.pop(context);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SuccessScreem(paymentType: widget.paymentType)));
                         MySnackbar.show(context, message: 'Abonelik başlatıldı');
                       } else {
                         MySnackbar.show(context, message: 'Ödeme sırasında bir hata oluştu : ${response['response']}');

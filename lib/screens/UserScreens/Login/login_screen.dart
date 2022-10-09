@@ -29,7 +29,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  TextEditingController emailController = kDebugMode ? TextEditingController(text: 'dentistefy@gmail.com') : TextEditingController();
+  TextEditingController emailController = kDebugMode ? TextEditingController(text: 'c2canplt231@gmail.com') : TextEditingController();
   TextEditingController passwordController = kDebugMode ? TextEditingController(text: '123456') : TextEditingController();
   final formKey = GlobalKey<FormState>();
 

@@ -27,14 +27,13 @@ class _UserProfileState extends State<UserProfile> {
   @override
   Widget build(BuildContext context) {
     UserProvider userProvider = Provider.of<UserProvider>(context);
-    UserModel userModel = userProvider.userModel!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(10),
           child: SingleChildScrollView(
             child: StreamBuilder<DatabaseEvent>(
-                stream: DatabaseService().userStream(userModel.uid!),
+                stream: DatabaseService().userStream(userProvider.userModel!.uid!),
                 builder: (context, snapshot) {
                   if (snapshot.data == null) {
                     return SizedBox();
@@ -140,22 +139,6 @@ class _UserProfileState extends State<UserProfile> {
                       ),
                       SizedBox(height: 10),
                       if (!userModel.premium) ...[
-                        MyListTile(
-                          onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => UserPremiumScreen()));
-                          },
-                          child: Row(
-                            children: [
-                              SizedBox(width: 6),
-                              Icon(Icons.add, color: Colors.black),
-                              Expanded(
-                                child: ListTile(title: Text('Premium Ol'), subtitle: Text('Premium olarak ürünlerin karekodlarını açabilirsiniz.')),
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                      ] else ...[
                         MyListTile(
                           onTap: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => UserPremiumScreen()));
